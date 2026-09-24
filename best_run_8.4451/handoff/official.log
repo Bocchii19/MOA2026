@@ -1,0 +1,78 @@
+=== receive · 2026-09-23 13:51:14 UTC ===
+accepted 29 file(s):
+  src/device/audio/mod.rs
+  src/device/audio/projection.rs
+  src/device/ffn.rs
+  src/device/full/attention.rs
+  src/device/full/mod.rs
+  src/device/full/projection.rs
+  src/device/full/rmsnorm.rs
+  src/device/full/rope.rs
+  src/device/layout.rs
+  src/device/mod.rs
+  src/device/qkv.rs
+  src/device/sao.rs
+  src/device/shared/hidden.rs
+  src/device/shared/lm_head.rs
+  src/device/shared/mlp.rs
+  src/device/shared/mod.rs
+  src/device/shared/residual.rs
+  src/device/shared/rmsnorm.rs
+  src/device/sliding/attention.rs
+  src/device/sliding/mod.rs
+  src/device/sliding/output.rs
+  src/device/sliding/projection.rs
+  src/device/sliding/qkv.rs
+  src/device/sliding/rmsnorm.rs
+  src/device/sliding/rope.rs
+  src/device/vision/layernorm.rs
+  src/device/vision/mod.rs
+  src/device/vision/projection.rs
+  src/ops.rs
+
+=== validate · 2026-09-23 13:51:14 UTC ===
+==> checking the skeleton contract
+    contract OK (detected version: furiosa-opt-std 0.8.1)
+
+=== build · 2026-09-23 13:51:14 UTC ===
+==> building on kernel-builder
+
+==> build succeeded
+
+=== evaluate · 2026-09-23 13:56:15 UTC ===
+queued on the NPU cluster as job 80179
+running on the NPU
+NPU kernel tests -- 3 cases x 3 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.03125 (   1.34% of expected)  mean|Δ|= 0.001468  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.03125 (   0.79% of expected)  mean|Δ|= 0.001405  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.002280  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.43% of expected)  mean|Δ|= 0.001357  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.01562 (   0.49% of expected)  mean|Δ|= 0.001234  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.002003  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.001465  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.001295  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.01562 (   0.52% of expected)  mean|Δ|= 0.001883  within tol=100.00%  -> PASS
+    median cycles=78092 (of 3 runs: [81399, 78092, 76871])
+
+==> sliding_attention_output
+[sliding_attention_output run0     ] max|Δ|=  0.01562 (   0.60% of expected)  mean|Δ|= 0.000869  within tol=100.00%  -> PASS
+[sliding_attention_output run1     ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.000863  within tol=100.00%  -> PASS
+[sliding_attention_output run2     ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.000888  within tol=100.00%  -> PASS
+    median cycles=37044 (of 3 runs: [37569, 36791, 37044])
+
+==> decoder_feedforward
+[decoder_feedforward run0          ] max|Δ|=  0.00781 (   1.39% of expected)  mean|Δ|= 0.000536  within tol=100.00%  -> PASS
+[decoder_feedforward run1          ] max|Δ|=  0.00781 (   1.12% of expected)  mean|Δ|= 0.000856  within tol=100.00%  -> PASS
+[decoder_feedforward run2          ] max|Δ|=  0.00781 (   1.05% of expected)  mean|Δ|= 0.000914  within tol=100.00%  -> PASS
+    median cycles=215459 (of 3 runs: [220933, 215459, 215459])
+
+
+all 3 tests passed
+remote_entrypoint.sh: all kernel tests passed
+ops::sliding_project_qkv: 78092 cycles
+ops::sliding_attention_output: 37044 cycles
+ops::decoder_feedforward: 215459 cycles
+score: 8.4451
+submission completed
