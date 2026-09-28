@@ -1,0 +1,360 @@
+@@AB_BEGIN 1 A@@
+NPU kernel tests -- 3 cases x 9 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+    median cycles=69629 min=69305 p25=69338 (of 9 runs: [72804, 69305, 69338, 69792, 69325, 69629, 69819, 70339, 69525])
+
+==> sliding_attention_output
+[sliding_attention_output run0     ] max|Δ|=  0.01562 (   0.45% of expected)  mean|Δ|= 0.000737  within tol=100.00%  -> PASS
+[sliding_attention_output run1     ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.000754  within tol=100.00%  -> PASS
+[sliding_attention_output run2     ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.000745  within tol=100.00%  -> PASS
+[sliding_attention_output run3     ] max|Δ|=  0.01562 (   0.60% of expected)  mean|Δ|= 0.000776  within tol=100.00%  -> PASS
+[sliding_attention_output run4     ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.000791  within tol=100.00%  -> PASS
+[sliding_attention_output run5     ] max|Δ|=  0.03125 (   0.76% of expected)  mean|Δ|= 0.000723  within tol=100.00%  -> PASS
+[sliding_attention_output run6     ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000736  within tol=100.00%  -> PASS
+[sliding_attention_output run7     ] max|Δ|=  0.01562 (   0.44% of expected)  mean|Δ|= 0.000789  within tol=100.00%  -> PASS
+[sliding_attention_output run8     ] max|Δ|=  0.01562 (   0.61% of expected)  mean|Δ|= 0.000722  within tol=100.00%  -> PASS
+    median cycles=35772 min=35540 p25=35693 (of 9 runs: [39318, 35540, 35763, 35971, 35693, 35772, 35827, 35887, 35677])
+
+==> decoder_feedforward
+[decoder_feedforward run0          ] max|Δ|=  0.00488 (   2.25% of expected)  mean|Δ|= 0.000641  within tol=100.00%  -> PASS
+[decoder_feedforward run1          ] max|Δ|=  0.00781 (   1.13% of expected)  mean|Δ|= 0.000884  within tol=100.00%  -> PASS
+[decoder_feedforward run2          ] max|Δ|=  0.00781 (   1.22% of expected)  mean|Δ|= 0.000962  within tol=100.00%  -> PASS
+[decoder_feedforward run3          ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000928  within tol=100.00%  -> PASS
+[decoder_feedforward run4          ] max|Δ|=  0.00781 (   0.75% of expected)  mean|Δ|= 0.000687  within tol=100.00%  -> PASS
+[decoder_feedforward run5          ] max|Δ|=  0.00781 (   1.16% of expected)  mean|Δ|= 0.000721  within tol=100.00%  -> PASS
+[decoder_feedforward run6          ] max|Δ|=  0.00586 (   1.40% of expected)  mean|Δ|= 0.000781  within tol=100.00%  -> PASS
+[decoder_feedforward run7          ] max|Δ|=  0.00781 (   1.14% of expected)  mean|Δ|= 0.000734  within tol=100.00%  -> PASS
+[decoder_feedforward run8          ] max|Δ|=  0.00781 (   1.49% of expected)  mean|Δ|= 0.000721  within tol=100.00%  -> PASS
+    median cycles=209071 min=208005 p25=208559 (of 9 runs: [210039, 209087, 209071, 208005, 208954, 208091, 208559, 209505, 209115])
+
+
+all 3 tests passed
+@@AB_END 1 A rc=0@@
+@@AB_BEGIN 1 B@@
+NPU kernel tests -- 3 cases x 9 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+    median cycles=69802 min=69410 p25=69599 (of 9 runs: [72537, 69599, 69510, 69897, 69913, 69410, 69802, 69631, 70015])
+
+==> sliding_attention_output
+[sliding_attention_output run0     ] max|Δ|=  0.01562 (   0.45% of expected)  mean|Δ|= 0.000737  within tol=100.00%  -> PASS
+[sliding_attention_output run1     ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.000754  within tol=100.00%  -> PASS
+[sliding_attention_output run2     ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.000745  within tol=100.00%  -> PASS
+[sliding_attention_output run3     ] max|Δ|=  0.01562 (   0.60% of expected)  mean|Δ|= 0.000776  within tol=100.00%  -> PASS
+[sliding_attention_output run4     ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.000791  within tol=100.00%  -> PASS
+[sliding_attention_output run5     ] max|Δ|=  0.03125 (   0.76% of expected)  mean|Δ|= 0.000723  within tol=100.00%  -> PASS
+[sliding_attention_output run6     ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000736  within tol=100.00%  -> PASS
+[sliding_attention_output run7     ] max|Δ|=  0.01562 (   0.44% of expected)  mean|Δ|= 0.000789  within tol=100.00%  -> PASS
+[sliding_attention_output run8     ] max|Δ|=  0.01562 (   0.61% of expected)  mean|Δ|= 0.000722  within tol=100.00%  -> PASS
+    median cycles=35988 min=35411 p25=35844 (of 9 runs: [39353, 35973, 36341, 36239, 35411, 35844, 35988, 36027, 35529])
+
+==> decoder_feedforward
+[decoder_feedforward run0          ] max|Δ|=  0.00488 (   2.25% of expected)  mean|Δ|= 0.000657  within tol=100.00%  -> PASS
+[decoder_feedforward run1          ] max|Δ|=  0.00781 (   1.00% of expected)  mean|Δ|= 0.000951  within tol=100.00%  -> PASS
+[decoder_feedforward run2          ] max|Δ|=  0.01172 (   1.40% of expected)  mean|Δ|= 0.001002  within tol=100.00%  -> PASS
+[decoder_feedforward run3          ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000991  within tol=100.00%  -> PASS
+[decoder_feedforward run4          ] max|Δ|=  0.00781 (   1.54% of expected)  mean|Δ|= 0.000733  within tol=100.00%  -> PASS
+[decoder_feedforward run5          ] max|Δ|=  0.00781 (   1.30% of expected)  mean|Δ|= 0.000780  within tol=100.00%  -> PASS
+[decoder_feedforward run6          ] max|Δ|=  0.00781 (   1.47% of expected)  mean|Δ|= 0.000827  within tol=100.00%  -> PASS
+[decoder_feedforward run7          ] max|Δ|=  0.00781 (   1.14% of expected)  mean|Δ|= 0.000787  within tol=100.00%  -> PASS
+[decoder_feedforward run8          ] max|Δ|=  0.00781 (   1.49% of expected)  mean|Δ|= 0.000770  within tol=100.00%  -> PASS
+    median cycles=204252 min=202518 p25=203585 (of 9 runs: [207648, 205629, 202518, 204252, 204658, 203585, 203330, 203976, 204408])
+
+
+all 3 tests passed
+@@AB_END 1 B rc=0@@
+@@AB_BEGIN 2 A@@
+NPU kernel tests -- 3 cases x 9 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+    median cycles=69423 min=68724 p25=69168 (of 9 runs: [73089, 69269, 70242, 69728, 68890, 68724, 69168, 69423, 70174])
+
+==> sliding_attention_output
+[sliding_attention_output run0     ] max|Δ|=  0.01562 (   0.45% of expected)  mean|Δ|= 0.000737  within tol=100.00%  -> PASS
+[sliding_attention_output run1     ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.000754  within tol=100.00%  -> PASS
+[sliding_attention_output run2     ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.000745  within tol=100.00%  -> PASS
+[sliding_attention_output run3     ] max|Δ|=  0.01562 (   0.60% of expected)  mean|Δ|= 0.000776  within tol=100.00%  -> PASS
+[sliding_attention_output run4     ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.000791  within tol=100.00%  -> PASS
+[sliding_attention_output run5     ] max|Δ|=  0.03125 (   0.76% of expected)  mean|Δ|= 0.000723  within tol=100.00%  -> PASS
+[sliding_attention_output run6     ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000736  within tol=100.00%  -> PASS
+[sliding_attention_output run7     ] max|Δ|=  0.01562 (   0.44% of expected)  mean|Δ|= 0.000789  within tol=100.00%  -> PASS
+[sliding_attention_output run8     ] max|Δ|=  0.01562 (   0.61% of expected)  mean|Δ|= 0.000722  within tol=100.00%  -> PASS
+    median cycles=35892 min=35581 p25=35689 (of 9 runs: [38766, 35581, 35621, 36307, 35744, 35892, 36071, 36568, 35689])
+
+==> decoder_feedforward
+[decoder_feedforward run0          ] max|Δ|=  0.00488 (   2.25% of expected)  mean|Δ|= 0.000641  within tol=100.00%  -> PASS
+[decoder_feedforward run1          ] max|Δ|=  0.00781 (   1.13% of expected)  mean|Δ|= 0.000884  within tol=100.00%  -> PASS
+[decoder_feedforward run2          ] max|Δ|=  0.00781 (   1.22% of expected)  mean|Δ|= 0.000962  within tol=100.00%  -> PASS
+[decoder_feedforward run3          ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000928  within tol=100.00%  -> PASS
+[decoder_feedforward run4          ] max|Δ|=  0.00781 (   0.75% of expected)  mean|Δ|= 0.000687  within tol=100.00%  -> PASS
+[decoder_feedforward run5          ] max|Δ|=  0.00781 (   1.16% of expected)  mean|Δ|= 0.000721  within tol=100.00%  -> PASS
+[decoder_feedforward run6          ] max|Δ|=  0.00586 (   1.40% of expected)  mean|Δ|= 0.000781  within tol=100.00%  -> PASS
+[decoder_feedforward run7          ] max|Δ|=  0.00781 (   1.14% of expected)  mean|Δ|= 0.000734  within tol=100.00%  -> PASS
+[decoder_feedforward run8          ] max|Δ|=  0.00781 (   1.49% of expected)  mean|Δ|= 0.000721  within tol=100.00%  -> PASS
+    median cycles=208574 min=208128 p25=208452 (of 9 runs: [208582, 208128, 208637, 208380, 208452, 208471, 208623, 208574, 209870])
+
+
+all 3 tests passed
+@@AB_END 2 A rc=0@@
+@@AB_BEGIN 2 B@@
+NPU kernel tests -- 3 cases x 9 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+    median cycles=69531 min=68820 p25=69407 (of 9 runs: [72803, 69978, 69407, 69531, 69234, 69703, 69490, 68820, 69968])
+
+==> sliding_attention_output
+[sliding_attention_output run0     ] max|Δ|=  0.01562 (   0.45% of expected)  mean|Δ|= 0.000737  within tol=100.00%  -> PASS
+[sliding_attention_output run1     ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.000754  within tol=100.00%  -> PASS
+[sliding_attention_output run2     ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.000745  within tol=100.00%  -> PASS
+[sliding_attention_output run3     ] max|Δ|=  0.01562 (   0.60% of expected)  mean|Δ|= 0.000776  within tol=100.00%  -> PASS
+[sliding_attention_output run4     ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.000791  within tol=100.00%  -> PASS
+[sliding_attention_output run5     ] max|Δ|=  0.03125 (   0.76% of expected)  mean|Δ|= 0.000723  within tol=100.00%  -> PASS
+[sliding_attention_output run6     ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000736  within tol=100.00%  -> PASS
+[sliding_attention_output run7     ] max|Δ|=  0.01562 (   0.44% of expected)  mean|Δ|= 0.000789  within tol=100.00%  -> PASS
+[sliding_attention_output run8     ] max|Δ|=  0.01562 (   0.61% of expected)  mean|Δ|= 0.000722  within tol=100.00%  -> PASS
+    median cycles=35913 min=35599 p25=35628 (of 9 runs: [39481, 36234, 36841, 36337, 35599, 35628, 35913, 35613, 35775])
+
+==> decoder_feedforward
+[decoder_feedforward run0          ] max|Δ|=  0.00488 (   2.25% of expected)  mean|Δ|= 0.000657  within tol=100.00%  -> PASS
+[decoder_feedforward run1          ] max|Δ|=  0.00781 (   1.00% of expected)  mean|Δ|= 0.000951  within tol=100.00%  -> PASS
+[decoder_feedforward run2          ] max|Δ|=  0.01172 (   1.40% of expected)  mean|Δ|= 0.001002  within tol=100.00%  -> PASS
+[decoder_feedforward run3          ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000991  within tol=100.00%  -> PASS
+[decoder_feedforward run4          ] max|Δ|=  0.00781 (   1.54% of expected)  mean|Δ|= 0.000733  within tol=100.00%  -> PASS
+[decoder_feedforward run5          ] max|Δ|=  0.00781 (   1.30% of expected)  mean|Δ|= 0.000780  within tol=100.00%  -> PASS
+[decoder_feedforward run6          ] max|Δ|=  0.00781 (   1.47% of expected)  mean|Δ|= 0.000827  within tol=100.00%  -> PASS
+[decoder_feedforward run7          ] max|Δ|=  0.00781 (   1.14% of expected)  mean|Δ|= 0.000787  within tol=100.00%  -> PASS
+[decoder_feedforward run8          ] max|Δ|=  0.00781 (   1.49% of expected)  mean|Δ|= 0.000770  within tol=100.00%  -> PASS
+    median cycles=203650 min=202350 p25=203238 (of 9 runs: [208538, 203675, 203650, 202350, 203238, 204920, 203143, 203364, 203651])
+
+
+all 3 tests passed
+@@AB_END 2 B rc=0@@
+@@AB_BEGIN 3 A@@
+NPU kernel tests -- 3 cases x 9 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+    median cycles=69630 min=69050 p25=69291 (of 9 runs: [72535, 70170, 69780, 70582, 69050, 69625, 69157, 69291, 69630])
+
+==> sliding_attention_output
+[sliding_attention_output run0     ] max|Δ|=  0.01562 (   0.45% of expected)  mean|Δ|= 0.000737  within tol=100.00%  -> PASS
+[sliding_attention_output run1     ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.000754  within tol=100.00%  -> PASS
+[sliding_attention_output run2     ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.000745  within tol=100.00%  -> PASS
+[sliding_attention_output run3     ] max|Δ|=  0.01562 (   0.60% of expected)  mean|Δ|= 0.000776  within tol=100.00%  -> PASS
+[sliding_attention_output run4     ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.000791  within tol=100.00%  -> PASS
+[sliding_attention_output run5     ] max|Δ|=  0.03125 (   0.76% of expected)  mean|Δ|= 0.000723  within tol=100.00%  -> PASS
+[sliding_attention_output run6     ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000736  within tol=100.00%  -> PASS
+[sliding_attention_output run7     ] max|Δ|=  0.01562 (   0.44% of expected)  mean|Δ|= 0.000789  within tol=100.00%  -> PASS
+[sliding_attention_output run8     ] max|Δ|=  0.01562 (   0.61% of expected)  mean|Δ|= 0.000722  within tol=100.00%  -> PASS
+    median cycles=35807 min=35600 p25=35662 (of 9 runs: [38309, 35600, 36005, 35605, 35662, 35807, 36004, 35670, 36095])
+
+==> decoder_feedforward
+[decoder_feedforward run0          ] max|Δ|=  0.00488 (   2.25% of expected)  mean|Δ|= 0.000641  within tol=100.00%  -> PASS
+[decoder_feedforward run1          ] max|Δ|=  0.00781 (   1.13% of expected)  mean|Δ|= 0.000884  within tol=100.00%  -> PASS
+[decoder_feedforward run2          ] max|Δ|=  0.00781 (   1.22% of expected)  mean|Δ|= 0.000962  within tol=100.00%  -> PASS
+[decoder_feedforward run3          ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000928  within tol=100.00%  -> PASS
+[decoder_feedforward run4          ] max|Δ|=  0.00781 (   0.75% of expected)  mean|Δ|= 0.000687  within tol=100.00%  -> PASS
+[decoder_feedforward run5          ] max|Δ|=  0.00781 (   1.16% of expected)  mean|Δ|= 0.000721  within tol=100.00%  -> PASS
+[decoder_feedforward run6          ] max|Δ|=  0.00586 (   1.40% of expected)  mean|Δ|= 0.000781  within tol=100.00%  -> PASS
+[decoder_feedforward run7          ] max|Δ|=  0.00781 (   1.14% of expected)  mean|Δ|= 0.000734  within tol=100.00%  -> PASS
+[decoder_feedforward run8          ] max|Δ|=  0.00781 (   1.49% of expected)  mean|Δ|= 0.000721  within tol=100.00%  -> PASS
+    median cycles=208307 min=207609 p25=207980 (of 9 runs: [209442, 207609, 207893, 208307, 207980, 208194, 209146, 208388, 209498])
+
+
+all 3 tests passed
+@@AB_END 3 A rc=0@@
+@@AB_BEGIN 3 B@@
+NPU kernel tests -- 3 cases x 9 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+    median cycles=69505 min=69342 p25=69385 (of 9 runs: [73423, 70126, 69552, 70437, 69348, 69385, 69455, 69505, 69342])
+
+==> sliding_attention_output
+[sliding_attention_output run0     ] max|Δ|=  0.01562 (   0.45% of expected)  mean|Δ|= 0.000737  within tol=100.00%  -> PASS
+[sliding_attention_output run1     ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.000754  within tol=100.00%  -> PASS
+[sliding_attention_output run2     ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.000745  within tol=100.00%  -> PASS
+[sliding_attention_output run3     ] max|Δ|=  0.01562 (   0.60% of expected)  mean|Δ|= 0.000776  within tol=100.00%  -> PASS
+[sliding_attention_output run4     ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.000791  within tol=100.00%  -> PASS
+[sliding_attention_output run5     ] max|Δ|=  0.03125 (   0.76% of expected)  mean|Δ|= 0.000723  within tol=100.00%  -> PASS
+[sliding_attention_output run6     ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000736  within tol=100.00%  -> PASS
+[sliding_attention_output run7     ] max|Δ|=  0.01562 (   0.44% of expected)  mean|Δ|= 0.000789  within tol=100.00%  -> PASS
+[sliding_attention_output run8     ] max|Δ|=  0.01562 (   0.61% of expected)  mean|Δ|= 0.000722  within tol=100.00%  -> PASS
+    median cycles=36002 min=35509 p25=35884 (of 9 runs: [38653, 36378, 35771, 36060, 36545, 35884, 36002, 35509, 35927])
+
+==> decoder_feedforward
+[decoder_feedforward run0          ] max|Δ|=  0.00488 (   2.25% of expected)  mean|Δ|= 0.000657  within tol=100.00%  -> PASS
+[decoder_feedforward run1          ] max|Δ|=  0.00781 (   1.00% of expected)  mean|Δ|= 0.000951  within tol=100.00%  -> PASS
+[decoder_feedforward run2          ] max|Δ|=  0.01172 (   1.40% of expected)  mean|Δ|= 0.001002  within tol=100.00%  -> PASS
+[decoder_feedforward run3          ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000991  within tol=100.00%  -> PASS
+[decoder_feedforward run4          ] max|Δ|=  0.00781 (   1.54% of expected)  mean|Δ|= 0.000733  within tol=100.00%  -> PASS
+[decoder_feedforward run5          ] max|Δ|=  0.00781 (   1.30% of expected)  mean|Δ|= 0.000780  within tol=100.00%  -> PASS
+[decoder_feedforward run6          ] max|Δ|=  0.00781 (   1.47% of expected)  mean|Δ|= 0.000827  within tol=100.00%  -> PASS
+[decoder_feedforward run7          ] max|Δ|=  0.00781 (   1.14% of expected)  mean|Δ|= 0.000787  within tol=100.00%  -> PASS
+[decoder_feedforward run8          ] max|Δ|=  0.00781 (   1.49% of expected)  mean|Δ|= 0.000770  within tol=100.00%  -> PASS
+    median cycles=203600 min=202664 p25=203028 (of 9 runs: [208180, 202664, 203028, 204107, 203910, 202824, 203600, 203065, 203912])
+
+
+all 3 tests passed
+@@AB_END 3 B rc=0@@

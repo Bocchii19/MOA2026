@@ -1,0 +1,311 @@
+# Outer
+
+The Outer stage broadcasts the two operands into a matching shape and multiplies them elementwise.
+
+“Outer” comes from the **outer product** of linear algebra.
+For vectors `u` (length `n`) and `v` (length `m`), `u v^T` is the `n × m` matrix where `(u v^T)[i, j] = u[i] × v[j]`.
+That matrix is produced by broadcasting `u` along the column axis (length `m`), broadcasting `v` along the row axis (length `n`), and multiplying elementwise.
+The Outer stage’s three sub-stages are the hardware embodiment of this exact semantics, run in series:
+
+- The Stream Adapter handles (and broadcasts) the streaming operand from the Collect Engine.
+- The TRF Sequencer handles (and broadcasts) the TRF operand from TRF SRAM.
+- The Multiplier widens the operand types (`i4` / `i8` to `i32`, `f8` / `bf16` to `f32`) and multiplies the two aligned operands elementwise.
+
+The output is a single multiplied tensor in the joint mapping `[Chip, Cluster, Slice, Lane, Time, Packet]`, ready for the Packet Reducer to reduce-add.
+
+## Interface
+
+`.contract_outer(&trf)` on `CollectTensor` invokes the Outer stage.
+
+```rust
+impl<
+    'l,
+    const T: Tu,
+    P: CanApplyContractOuter,
+    D: Scalar + ContractionCast,
+    Chip: M,
+    Cluster: M,
+    Slice: M,
+    Time: M,
+    Packet: M,
+    B: Backend,
+> TuTensor<'l, T, P, D, Chip, Cluster, Slice, Time, Packet, B>
+{
+    /// Runs the Outer stage: stashes the two un-broadcast operands (widened to the accumulator type)
+    /// and the layouts [`super::ContractTimeTensor::contract_lane`] needs to fuse them into a [`LazyContraction`]. No
+    /// materializing alternative, no per-backend branch -- every backend fuses the same way.
+    ///
+    /// The impl block binds [`ContractionCast`], so this method does not exist on a `TuTensor` whose
+    /// element type the Multiplier has no MAC for.
+    #[primitive(TuTensor::contract_outer)]
+    pub fn contract_outer<OutTime: M, OutPacket: M, Lane: M, TrfElement: M, TrfD>(
+        self,
+        trf_tensor: &TrfTensor<TrfD, Chip, Cluster, Slice, Lane, TrfElement, B>,
+    ) -> ContractOuterTensor<'l, T, <D as ContractionCast>::Output, D, Chip, Cluster, Slice, Lane, OutTime, OutPacket, B>
+    where
+        D: Cast<<D as ContractionCast>::Output>,
+        // The weight (TRF) type must form a valid contraction-engine operand pair with the
+        // stream type `D`: same type, or a mixed integer precision within a
+        // family (i4/i5 x i4/i5, i8/i9 x i8/i9). Both operands widen to the
+        // stream's accumulator for the multiply.
+        TrfD: Scalar + ContractionWeight<D> + Cast<<D as ContractionCast>::Output>,
+    {
+        type Out<D> = <D as ContractionCast>::Output;
+
+        // Skipping the broadcast transpose does not skip its validity contract -- a malformed
+        // contraction would otherwise slip past these asserts and panic far downstream instead.
+        stream_adapter::verify_stream_adapter::<D, Lane, Time, Packet, OutTime, OutPacket>();
+        trf_sequencer::verify_trf_sequencer::<TrfD, Lane, TrfElement, OutTime, OutPacket>();
+
+        // The operands keep their own compact layouts: lhs is `[Chip, Cluster, Slice, Time, Packet]`
+        // (`self.inner`), rhs is `[Chip, Cluster, Slice, Lane, TrfElement]` (`trf_tensor`). A
+        // bare-buffer backend reads its strides from these; `MathStorage` ignores them (its axes live
+        // in the storage).
+        let lhs_map = <m![{ Chip }, { Cluster }, { Slice }, { Time }, { Packet }]>::to_value();
+        let rhs_map = <m![{ Chip }, { Cluster }, { Slice }, { Lane }, { TrfElement }]>::to_value();
+        let pre_reduce = <m![{ Chip }, { Cluster }, { Slice }, { Lane }, { OutTime }, { OutPacket }]>::to_value();
+
+        // Widen each operand to the `Out<D>` accumulator up front, at the operand's own (compact) size,
+        // not pre_reduce's -- the fold at `contract_lane` then runs entirely in `Out<D>`. Parity-identical
+        // to the old per-cell widen (same `Cast::cast` per element), it just never allocates the
+        // pre_reduce-shaped broadcast this stage used to build.
+        //
+        let contraction = LazyContraction {
+            lhs: self.inner.map(|v| -> Out<D> { v.cast() }).inner,
+            rhs: trf_tensor.inner.map(|v| -> Out<D> { v.cast() }).inner,
+            lhs_map,
+            rhs_map,
+            pre_reduce,
+        };
+        ContractOuterTensor::new(self.device, contraction)
+    }
+}
+```
+
+After their respective adapters (Stream Adapter for the streaming path, TRF Sequencer for the TRF path), both paths feed `Lane` / `Time` / `Packet` of matching shape, and the Multiplier multiplies them elementwise at aligned positions.
+
+The streaming operand’s `Time` / `Packet` map to the output’s `OutTime` / `OutPacket`:
+`OutPacket` absorbs the innermost size-1-or-2 factor of `Time` via Packing.
+`OutTime` retains the remaining factors of `Time`, with broadcast factors added at its innermost positions via Broadcast.
+Broadcast factors come from the TRF operand’s `Lane` / `Element` (where the streaming operand replicates against the TRF mapping) and from any purely-output axes that appear in `OutTime` / `OutPacket` but in neither the input nor the TRF (e.g. einsum `AB, BC -> ABCD` where `D` is broadcast).
+
+The `TrfTensor` has shape `[Chip, Cluster, Slice, Lane, Element]`, with `Chip` / `Cluster` / `Slice` / `Lane` spatially parallel: `Chip` / `Cluster` / `Slice` pass through to the output, and `Lane` partitions per-lane data across 1–8 hardware lanes.
+`Element` (the per-lane layout set by `.to_trf()`) is reshaped by the TRF Sequencer to fill `OutTime` / `OutPacket`.
+
+## Stream Adapter
+
+The Stream Adapter transforms the streaming `Time` / `Packet` into the computation shape (`Lane` / `OutTime` / `OutPacket`) via two operations: Packing and Broadcast.
+The compiler derives the three free variables (`PackSize`, `LaneBroadcast`, `TimeBroadcast`) from the user-supplied `OutTime` / `OutPacket`, the TRF operand, and any purely-output broadcast axes, giving the mapping:
+
+```rust
+Lane      = LaneBroadcast
+OutTime   = [Time / PackSize, TimeBroadcast]
+OutPacket = [Time % PackSize, Packet] # (64 / D::SIZE)
+```
+
+### Packing
+
+The Collect Engine produces 32 B flits, and the Outer stage emits packets of `PackSize × 32` B (32 or 64 on RNGD).
+Packing combines `PackSize ∈ {1, 2}` consecutive flits into one packet:
+
+```rust
+PackTime   = [Time / PackSize]
+PackPacket = [Time % PackSize, Packet] # (PackSize × 32 / D::SIZE)
+```
+
+`PackSize` is set by matching `OutPacket` against the input `Packet`: `PackSize = 2` if `OutPacket` absorbs the innermost size-2 factor of `Time`, otherwise `PackSize = 1`.
+Equivalently, `PackSize = OutPacket::SIZE * D::SIZE / 32`, so the user picks `OutPacket` (32 B or 64 B) and Packing’s collect-flit count follows.
+
+Hardware always operates on 64 B packets internally; when `PackSize = 1`, the unused 32 B half holds zeros that do not propagate into the logical `OutPacket` type.
+Downstream stages (Packet Reducer, Lane Folder) therefore see only the `PackSize × 32` B payload, avoiding dummy cycles, see the Lane Folder Sequential note.
+
+### Broadcast
+
+After packing, the Stream Adapter broadcasts the data spatially via `LaneBroadcast` (the TRF’s `Lane` mapping, ∈ {1, 2, 4, 8}) and temporally via `TimeBroadcast`.
+`TimeBroadcast` covers factors of TRF `Element` not in the input `Time`, and also any purely-output axes in `OutTime` that appear in neither the input nor the TRF: the same broadcast machinery replicates the packet across both.
+Each destination receives the same `OutPacket`:
+
+```rust
+Lane      = LaneBroadcast
+OutTime   = [PackTime, TimeBroadcast]
+OutPacket = PackPacket
+```
+
+`TimeBroadcast` factors occupy the *innermost* positions of `OutTime`: the same `OutPacket` is re-sent across those factors before iterating any outer `PackTime` factor.
+
+### Examples
+
+The example below exercises both operations: Packing absorbs the innermost size-2 factor `L` of `Time` into `Packet` (`PackSize = 2`), Lane Broadcast distributes the resulting packet to `N = 8` lanes, and Time Broadcast tiles the streaming data across a TRF-only `B = 5` axis.
+
+```rust
+#![allow(unused)]
+fn main() {
+#![feature(adt_const_params)]
+extern crate furiosa_opt_std;
+use furiosa_opt_std::prelude::*;
+axes![M = 32, N = 8, K = 16, L = 2, B = 5];
+
+fn stream_adapter_example<'l, const T: Tu>(
+    input: CollectTensor<'l, { T }, bf16, m![1], m![1 # 2], m![1 # 256], m![M, L], m![K]>,
+    trf: &TrfTensor<bf16, m![1], m![1 # 2], m![1 # 256], m![N], m![B, L, K]>,
+) -> ContractOuterTensor<'l, { T }, f32, bf16, m![1], m![1 # 2], m![1 # 256], m![N], m![M, B], m![L, K]> {
+    // Packing (PackSize = 2):
+    //   L = 2 (innermost Time) absorbed into Packet.
+    //   PackTime = [M = 32], PackPacket = [L = 2, K = 16] = 32 bf16 = 64B.
+    // Lane Broadcast: same packet to all N = 8 lanes.
+    // Time Broadcast: B = 5 (TRF-only) added at innermost OutTime.
+    //   OutTime = [M, B = 5], OutPacket = [L = 2, K = 16].
+    input.contract_outer::<m![M, B], m![L, K], _, _, _>(trf)
+}
+
+let mut device = Device::new(Topology { chips: 1, pes: 8 }).unwrap();
+
+let a: CollectTensor<'_, _, bf16, m![1], m![1 # 2], m![1 # 256], m![M, L], m![K]> = CollectTensor::new(&mut device.main, Tensor::zero());
+let b: TrfTensor<bf16, m![1], m![1 # 2], m![1 # 256], m![N], m![B, L, K]> = TrfTensor::zero();
+let _o = stream_adapter_example(a, &b);
+}
+```
+
+### Constraints
+
+- `OutPacket::SIZE * Storage::SIZE ∈ {32, 64}` bytes (on RNGD), where `Storage` is the pre-widen operand dtype (e.g. `bf16` = 2 B, *not* the widened `f32` accumulator the result tensor carries).
+The size is 32 for `PackSize = 1` and 64 for `PackSize = 2`.
+The user picks this size and Packing’s collect-flit count follows.
+- `PackSize ∈ {1, 2}` (see Packing).
+- `Lane::SIZE ∈ {1, 2, 4, 8}`.
+
+### Performance
+
+`PackSize` sets MAC utilization.
+`PackSize = 2` fills the full 64 B and uses all MACs.
+`PackSize = 1` fills only 32 B, so the zero-padded half always multiplies by zero and effective throughput halves.
+
+`PackSize = 2` takes 2 cycles per Packet (two 32 B flits combine into one 64 B Packet), but this is not a pipeline bottleneck: upstream supplies one 32 B flit every cycle at the full fetch rate, so the Stream Adapter consumes flits as fast as they arrive and emits a Packet every 2 cycles to match downstream consumption.
+
+Time Broadcasting amortizes fetches.
+Broadcast factors reuse the same streaming packet across cycles without re-fetching, which eliminates bandwidth cost for those factors.
+
+Fetch bandwidth (up to 32 B/cycle per fetch) bounds the Stream Adapter overall.
+Interleave fetch patterns across slices to maximize utilization.
+
+## TRF Sequencer
+
+The TRF Sequencer reads a `TrfTensor` and reshapes its `Element` into `OutTime` / `OutPacket` for the Packet Reducer.
+See Register Files for the TRF storage layout (lanes, banks, rows, double-buffering, cache).
+
+The mapping:
+
+```rust
+OutTime   = (sequencing over [Element / ReadSize] with broadcasts)
+OutPacket = [PacketBroadcast, Element % ReadSize]
+```
+
+`OutPacket` is filled each cycle by one TRF read: one full `OutPacket` (640 bits per lane across both banks, or 320 bits when only one bank is read) is generated every cycle.
+See To Contraction Engine for the per-slice totals across 8 lanes (in bytes).
+The read pulls the innermost contiguous portion of `Element` and replicates it to fill the 64 B `OutPacket`.
+The compiler picks the largest `ReadSize` such that `Element % ReadSize == OutPacket % ReadSize` and `ReadSize * D::SIZE ≤ 64` bytes: a wider `ReadSize` spans both TRF banks per lane, a narrower one uses just one bank.
+
+`OutTime` is filled across cycles by sequencing `Element / ReadSize` (plus optional broadcasts).
+The TRF Sequencer uses the same nested-loop configuration as all other sequencers.
+
+### Examples
+
+In this example, `ReadSize` covers all of `Element` in one 64 B read, so `Element / ReadSize` is trivial and the sequencer iterates only broadcasts:
+
+```rust
+#![allow(unused)]
+fn main() {
+#![feature(adt_const_params)]
+extern crate furiosa_opt_std;
+use furiosa_opt_std::prelude::*;
+axes![M = 32, N = 8, K = 32];
+
+fn trf_sequencer_full_read<'l, const T: Tu>(
+    input: CollectTensor<'l, T, bf16, m![1], m![1 # 2], m![1 # 256], m![M, K / 16], m![K % 16]>,
+    trf: &TrfTensor<bf16, m![1], m![1 # 2], m![1 # 256], m![N], m![K]>,
+) -> ContractOuterTensor<'l, T, f32, bf16, m![1], m![1 # 2], m![1 # 256], m![N], m![M], m![K]> {
+    // Element         = K
+    // ReadSize        = 32
+    // PacketBroadcast = 1
+    // OutTime         = M      (sequencing over [K / 32] (= 1), broadcast M)
+    // OutPacket       = K      (= [1, K % 32])
+    input.contract_outer::<m![M], m![K], _, _, _>(trf)
+}
+
+let mut device = Device::new(Topology { chips: 1, pes: 8 }).unwrap();
+
+let a: CollectTensor<'_, _, bf16, m![1], m![1 # 2], m![1 # 256], m![M, K / 16], m![K % 16]> = CollectTensor::new(&mut device.main, Tensor::zero());
+let b: TrfTensor<bf16, m![1], m![1 # 2], m![1 # 256], m![N], m![K]> = TrfTensor::zero();
+let _o = trf_sequencer_full_read(a, &b);
+}
+```
+
+In this example, `ReadSize` covers only part of `Element`, so `Element / ReadSize` is non-trivial and the sequencer iterates the outer `Element` factor alongside a broadcast:
+
+```rust
+#![allow(unused)]
+fn main() {
+#![feature(adt_const_params)]
+extern crate furiosa_opt_std;
+use furiosa_opt_std::prelude::*;
+axes![M = 32, N = 8, K = 16, L = 2, O = 2];
+
+fn trf_sequencer_partial_read<'l, const T: Tu>(
+    input: CollectTensor<'l, T, bf16, m![1], m![1 # 2], m![1 # 256], m![O, M, L], m![K]>,
+    trf: &TrfTensor<bf16, m![1], m![1 # 2], m![1 # 256], m![N], m![O, K]>,
+) -> ContractOuterTensor<'l, T, f32, bf16, m![1], m![1 # 2], m![1 # 256], m![N], m![O, M], m![L, K]> {
+    // Element         = [O, K]
+    // ReadSize        = 16
+    // PacketBroadcast = L
+    // OutTime         = [O, M]    (sequencing over [O, K] / 16 (= O), broadcast M)
+    // OutPacket       = [L, K]    (= [L, [O, K] % 16])
+    input.contract_outer::<m![O, M], m![L, K], _, _, _>(trf)
+}
+
+let mut device = Device::new(Topology { chips: 1, pes: 8 }).unwrap();
+
+let a: CollectTensor<'_, _, bf16, m![1], m![1 # 2], m![1 # 256], m![O, M, L], m![K]> = CollectTensor::new(&mut device.main, Tensor::zero());
+let b: TrfTensor<bf16, m![1], m![1 # 2], m![1 # 256], m![N], m![O, K]> = TrfTensor::zero();
+let _o = trf_sequencer_partial_read(a, &b);
+}
+```
+
+### Constraints
+
+- **Hardware dimensions**: `Chip::SIZE`, `Cluster::SIZE`, and `Slice::SIZE` must match the hardware configuration (see Sequencer).
+- **Address alignment**: when `Element % ReadSize` covers all 64 B, the read spans both TRF banks per lane, so the sequencer’s base address and all strides must align to 64 B.
+
+### Architecture
+
+Across cycles, the sequencer iterates the outer factors of `Element` (i.e.
+`Element / ReadSize`) using the same nested-loop configuration as all other sequencers, so a single `TrfTensor` walks `Element / ReadSize` cycles before exhausting its content.
+`PacketBroadcast` factors replicate the same row within a single cycle, filling the 64 B `OutPacket` past the natural `ReadSize` without consuming additional TRF read bandwidth.
+
+### Performance
+
+Throughput is one full `OutPacket` per lane per cycle: 640 bits per lane when both banks are read, 320 bits per lane when only one bank is read.
+See Register Files: To Contraction Engine for the per-slice byte totals.
+The TRF read cache and bank alternation (see Register Files: Double Buffering) keep the concurrent sub-context store unblocked across broadcast reuse and narrow reads.
+
+## Multiplier
+
+The Multiplier consumes the two aligned operands from the Stream Adapter and TRF Sequencer, widens each input element to the contraction output type to keep the downstream accumulator from overflowing, and multiplies them elementwise.
+Its output, a single tensor in the joint mapping `[Chip, Cluster, Slice, Lane, Time, Packet]`, becomes the input to the Packet Reducer.
+Each `Time` cycle, every `Lane` produces a full `packet` of products in parallel.
+
+### Operand types
+
+These are the operand pairs the Multiplier accepts, with the type each pair widens to:
+
+| Stream (activation) | Weight (TRF) | Accumulator |
+|---|---|---|
+| `i4` or `i5` | `i4` or `i5` | `i32` |
+| `i8` or `i9` | `i8` or `i9` | `i32` |
+| `f8e4m3` | `f8e4m3` | `f32` |
+| `f8e5m2` | `f8e5m2` | `f32` |
+| `bf16` | `bf16` | `f32` |
+
+An integer operand may be the raw form (`i4`/`i8`) or its zero-point-subtracted staging (`i5`/`i9`, produced by Zero-Point Subtraction), and the two operands need not match within a family.
+They may not cross families (no `i4` against `i8`) or kinds (no integer against float), and a float pair must match exactly.
+
+A contraction over an element type this table does not list runs in the Vector Engine instead: multiply elementwise, then reduce with Intra-Slice Reduce, which computes in `i32` / `f32`.

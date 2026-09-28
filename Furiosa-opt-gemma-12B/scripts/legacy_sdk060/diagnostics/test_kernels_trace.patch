@@ -1,0 +1,90 @@
+diff --git a/tests/test_kernels.rs b/tests/test_kernels.rs
+index d284e1b..afdcd59 100644
+--- a/tests/test_kernels.rs
++++ b/tests/test_kernels.rs
+@@ -588,8 +588,9 @@ fn compare(label: &str, expected: &[f32], actual: &[f32], atol: f32, rtol: f32)
+ 
+ const TRACING_TARGET_NPU: &str = "span::npu";
+ 
+-#[derive(Clone, Copy)]
++#[derive(Clone)]
+ struct Span {
++    name: String,
+     begin: u64,
+     end: u64,
+ }
+@@ -607,6 +608,24 @@ impl Collector {
+         self.spans.lock().unwrap().clear();
+     }
+ 
++    /// Print every span since the last `clear`, sorted by begin, relative to the earliest begin.
++    fn dump(&self) {
++        let spans = self.spans.lock().unwrap();
++        let Some(t0) = spans.iter().map(|s| s.begin).min() else { return };
++        let mut v: Vec<&Span> = spans.iter().collect();
++        v.sort_by_key(|s| (s.begin, s.end));
++        println!("    SPANS n={}", v.len());
++        for s in v {
++            println!(
++                "    SPAN {:<48} begin={:>9} end={:>9} dur={:>8}",
++                s.name,
++                s.begin - t0,
++                s.end - t0,
++                s.end - s.begin
++            );
++        }
++    }
++
+     /// Real total cycles for whatever ran since the last `clear`: the union of every
+     /// span observed (min begin .. max end).
+     fn window_cycles(&self) -> Option<u64> {
+@@ -619,6 +638,7 @@ impl Collector {
+ 
+ #[derive(Default)]
+ struct FieldExtractor {
++    name: Option<String>,
+     begin: Option<u64>,
+     end: Option<u64>,
+ }
+@@ -632,7 +652,17 @@ impl tracing::field::Visit for FieldExtractor {
+         }
+     }
+ 
+-    fn record_debug(&mut self, _field: &tracing::field::Field, _value: &dyn std::fmt::Debug) {}
++    fn record_str(&mut self, field: &tracing::field::Field, value: &str) {
++        if field.name() == "name" {
++            self.name = Some(value.to_string());
++        }
++    }
++
++    fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn std::fmt::Debug) {
++        if field.name() == "name" && self.name.is_none() {
++            self.name = Some(format!("{value:?}"));
++        }
++    }
+ }
+ 
+ impl tracing::Subscriber for Collector {
+@@ -645,7 +675,11 @@ impl tracing::Subscriber for Collector {
+             let mut extractor = FieldExtractor::default();
+             attrs.record(&mut extractor);
+             if let (Some(begin), Some(end)) = (extractor.begin, extractor.end) {
+-                self.spans.lock().unwrap().push(Span { begin, end });
++                self.spans.lock().unwrap().push(Span {
++                    name: extractor.name.unwrap_or_default(),
++                    begin,
++                    end,
++                });
+             }
+         }
+         // 0 is reserved by `span::Id`; spans aren't tracked individually here, so the
+@@ -730,6 +764,9 @@ async fn main() {
+                 Some(c) => println!("    cycles={c}"),
+                 None => println!("    cycles=none observed"),
+             }
++            if std::env::var("TUC_PROFILE_LEVEL").unwrap_or_default().eq_ignore_ascii_case("trace") {
++                collector.dump();
++            }
+             println!();
+         }
+ 

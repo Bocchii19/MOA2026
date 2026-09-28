@@ -1,0 +1,13 @@
+{
+  "id": 99367,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-upd1-fullrepeat",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:48:59Z",
+  "started_at": "2026-09-25T21:49:18Z",
+  "finished_at": "2026-09-25T21:50:22Z",
+  "duration_sec": 63.92119113,
+  "exit_code": 0,
+  "device_id": null
+}

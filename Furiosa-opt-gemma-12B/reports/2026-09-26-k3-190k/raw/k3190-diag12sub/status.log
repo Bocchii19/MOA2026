@@ -1,0 +1,13 @@
+{
+  "id": 99221,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-diag12sub",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:08:31Z",
+  "started_at": "2026-09-25T21:08:31Z",
+  "finished_at": "2026-09-25T21:08:31Z",
+  "duration_sec": 0.016569309,
+  "exit_code": 0,
+  "device_id": null
+}

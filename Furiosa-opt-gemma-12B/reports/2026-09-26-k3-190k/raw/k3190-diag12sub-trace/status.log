@@ -1,0 +1,13 @@
+{
+  "id": 99230,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-diag12sub-trace",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:11:21Z",
+  "started_at": "2026-09-25T21:11:21Z",
+  "finished_at": "2026-09-25T21:11:31Z",
+  "duration_sec": 10.483560519,
+  "exit_code": 0,
+  "device_id": null
+}

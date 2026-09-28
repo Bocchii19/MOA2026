@@ -1,0 +1,198 @@
+[
+  {
+    "index": 1,
+    "pair": 1,
+    "variant": "A",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 93845,
+      "sliding_attention_output": 50139,
+      "decoder_feedforward": 232495
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 7.0010731403624495
+  },
+  {
+    "index": 2,
+    "pair": 1,
+    "variant": "B",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 92647,
+      "sliding_attention_output": 47629,
+      "decoder_feedforward": 235675
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 7.120207377431719
+  },
+  {
+    "index": 3,
+    "pair": 2,
+    "variant": "B",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 92992,
+      "sliding_attention_output": 52195,
+      "decoder_feedforward": 230045
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 6.953481868863477
+  },
+  {
+    "index": 4,
+    "pair": 2,
+    "variant": "A",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 122007,
+      "sliding_attention_output": 45285,
+      "decoder_feedforward": 243991
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 6.530209487765543
+  },
+  {
+    "index": 5,
+    "pair": 3,
+    "variant": "A",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 99091,
+      "sliding_attention_output": 59317,
+      "decoder_feedforward": 233053
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 6.4954422673038
+  },
+  {
+    "index": 6,
+    "pair": 3,
+    "variant": "B",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 94659,
+      "sliding_attention_output": 47015,
+      "decoder_feedforward": 234361
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 7.113284699321498
+  },
+  {
+    "index": 7,
+    "pair": 4,
+    "variant": "B",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 89691,
+      "sliding_attention_output": 44041,
+      "decoder_feedforward": 230887
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 7.438686396553866
+  },
+  {
+    "index": 8,
+    "pair": 4,
+    "variant": "A",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 98267,
+      "sliding_attention_output": 50504,
+      "decoder_feedforward": 234263
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 6.860446226009037
+  },
+  {
+    "index": 9,
+    "pair": 5,
+    "variant": "A",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 92291,
+      "sliding_attention_output": 48199,
+      "decoder_feedforward": 231215
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 7.146503780134792
+  },
+  {
+    "index": 10,
+    "pair": 5,
+    "variant": "B",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 110535,
+      "sliding_attention_output": 43813,
+      "decoder_feedforward": 232197
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 6.93710528073101
+  },
+  {
+    "index": 11,
+    "pair": 6,
+    "variant": "B",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 91221,
+      "sliding_attention_output": 43281,
+      "decoder_feedforward": 222301
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 7.534485108676841
+  },
+  {
+    "index": 12,
+    "pair": 6,
+    "variant": "A",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 102949,
+      "sliding_attention_output": 52015,
+      "decoder_feedforward": 233199
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 6.698932726165021
+  },
+  {
+    "index": 13,
+    "pair": 7,
+    "variant": "A",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 93959,
+      "sliding_attention_output": 52785,
+      "decoder_feedforward": 234063
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 6.863898663671898
+  },
+  {
+    "index": 14,
+    "pair": 7,
+    "variant": "B",
+    "exit_code": 0,
+    "cycles": {
+      "sliding_project_qkv": 95153,
+      "sliding_attention_output": 48807,
+      "decoder_feedforward": 221779
+    },
+    "passed": true,
+    "errors": [],
+    "estimated_score": 7.143149660397565
+  }
+]

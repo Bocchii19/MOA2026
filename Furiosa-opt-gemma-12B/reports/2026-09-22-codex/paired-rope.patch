@@ -1,0 +1,62 @@
+diff --git a/src/device/sliding/tail.rs b/src/device/sliding/tail.rs
+index 5f4586b..1e8e96b 100644
+--- a/src/device/sliding/tail.rs
++++ b/src/device/sliding/tail.rs
+@@ -5,7 +5,7 @@
+ use furiosa_opt_std::prelude::*;
+ 
+ use crate::Chip;
+-use crate::axes::{Ds, Dummy256, E, Gs, Ns, Ps, Qs};
++use crate::axes::{Ds, Dummy2, Dummy256, E, Gs, Ns, Ps, Qs};
+ use crate::device::layout::{Cluster, Replicated, Slice};
+ use crate::device::sliding::projection::{KvClusters, KvRows, QueryClusters, QueryRows};
+ use crate::EPS;
+@@ -427,38 +427,21 @@ pub(crate) fn rope<S: M>(
+         .commit_trim::<m![Ds = 128 % 16]>()
+         .commit_view(rotated.view_mut().tile::<m![Ds], 128, m![Ds = 128 #{!} 256]>(128));
+ 
+-    let x_cos: DmTensor<f32, Chip, HeadClusters, S, m![Ds]> = ctx
+-        .main
+-        .begin(x.view())
+-        .fetch::<m![Ds / 16], m![Ds % 16]>()
+-        .fetch_cast::<f32>()
+-        .collect::<m![Ds / 8], m![Ds % 8]>()
+-        .vector_init()
+-        .vector_intra_slice_tag(TagMode::Zero)
+-        .vector_narrow_split::<m![Ds / 4], m![Ds % 4]>()
+-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), cos_vrf)
+-        .vector_widen_concat::<m![Ds / 8], m![Ds % 8]>()
+-        .vector_final()
+-        .commit_trim::<m![Ds % 8]>()
+-        .commit();
+-    let x_cos_vrf: VrfTensor<f32, Chip, HeadClusters, S, m![Ds]> = ctx
+-        .sub
+-        .begin(x_cos.view())
+-        .fetch::<m![Ds / 8], m![Ds % 8]>()
+-        .collect::<m![Ds / 8], m![Ds % 8]>()
+-        .to_vrf();
+-
++    // Interleave the original and half-swapped streams. Both products are evaluated in
++    // f32 and added before the existing bf16 cast, preserving the RoPE arithmetic while
++    // removing the x*cos DM temporary and its sub-context VRF staging program.
+     ctx.main
+-        .begin(rotated.view())
+-        .fetch::<m![Ds / 16], m![Ds % 16]>()
++        .begin_interleaved::<Dummy2, _, _, _, _, _>(x.view(), rotated.view())
++        .fetch::<m![Ds / 8, Dummy2], m![Ds % 8]>()
+         .fetch_cast::<f32>()
+-        .collect::<m![Ds / 8], m![Ds % 8]>()
++        .collect::<m![Ds / 8, Dummy2], m![Ds % 8]>()
+         .vector_init()
+-        .vector_intra_slice_tag(TagMode::Zero)
++        .vector_intra_slice_unzip::<Dummy2, m![Ds / 8, Dummy2 = 1 # 2], m![Ds / 8]>()
+         .vector_narrow_split::<m![Ds / 4], m![Ds % 4]>()
+-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), sin_vrf)
+-        .vector_fp_binary(FpBinaryOp::AddF, &x_cos_vrf)
++        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), cos_vrf, ())
++        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul1), (), sin_vrf)
+         .vector_widen_concat::<m![Ds / 8], m![Ds % 8]>()
++        .vector_clip_zip(ClipBinaryOpF32::Add)
+         .vector_final()
+         .cast::<bf16, m![Ds % 8 # 16]>()
+         .commit_trim::<m![Ds % 8]>()

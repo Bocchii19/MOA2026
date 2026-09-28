@@ -1,0 +1,15 @@
+Submission:   4912db55
+Team:         EDABK Spidey
+Status:       completed
+Stage:        evaluate
+Submitted:    2026-09-22 11:06
+Finished:     2026-09-22 11:14
+
+Cycles:
+  ops::sliding_project_qkv         89120
+  ops::sliding_attention_output    43535
+  ops::decoder_feedforward         230049
+
+Score:        7.4924
+
+Full log:     moa-submitter log 4912db55

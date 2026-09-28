@@ -1,0 +1,96 @@
+=== receive · 2026-09-22 13:01:53 UTC ===
+accepted 27 file(s):
+  src/device/audio/mod.rs
+  src/device/audio/projection.rs
+  src/device/full/attention.rs
+  src/device/full/mod.rs
+  src/device/full/projection.rs
+  src/device/full/rmsnorm.rs
+  src/device/full/rope.rs
+  src/device/layout.rs
+  src/device/mod.rs
+  src/device/shared/f8split.rs
+  src/device/shared/lm_head.rs
+  src/device/shared/mlp.rs
+  src/device/shared/mlp13.rs
+  src/device/shared/mod.rs
+  src/device/shared/residual.rs
+  src/device/shared/rmsnorm.rs
+  src/device/sliding/attention.rs
+  src/device/sliding/halfnorm.rs
+  src/device/sliding/mod.rs
+  src/device/sliding/projection.rs
+  src/device/sliding/rmsnorm.rs
+  src/device/sliding/rope.rs
+  src/device/sliding/tail.rs
+  src/device/vision/layernorm.rs
+  src/device/vision/mod.rs
+  src/device/vision/projection.rs
+  src/ops.rs
+
+=== validate · 2026-09-22 13:01:53 UTC ===
+==> checking the skeleton contract
+    contract OK (detected version: furiosa-opt-std 0.6.0)
+
+=== build · 2026-09-22 13:01:53 UTC ===
+==> building on kernel-builder
+
+==> build succeeded
+
+=== evaluate · 2026-09-22 13:06:44 UTC ===
+queued on the NPU cluster as job 74491
+running on the NPU
+NPU kernel tests -- 3 cases x 7 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001052  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.03125 (   1.43% of expected)  mean|Δ|= 0.001012  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001157  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   0.94% of expected)  mean|Δ|= 0.001070  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   0.99% of expected)  mean|Δ|= 0.000950  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   1.03% of expected)  mean|Δ|= 0.001057  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001064  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.51% of expected)  mean|Δ|= 0.001113  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001065  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.03125 (   1.14% of expected)  mean|Δ|= 0.000988  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   0.84% of expected)  mean|Δ|= 0.001090  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   0.83% of expected)  mean|Δ|= 0.001161  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.32% of expected)  mean|Δ|= 0.000956  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.03125 (   1.03% of expected)  mean|Δ|= 0.000950  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.92% of expected)  mean|Δ|= 0.001099  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.01562 (   0.53% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.000958  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.03125 (   0.88% of expected)  mean|Δ|= 0.001119  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001053  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001092  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.000974  within tol=100.00%  -> PASS
+    median cycles=93249 (of 7 runs: [91451, 93131, 92077, 93983, 94141, 93249, 94957])
+
+==> sliding_attention_output
+[sliding_attention_output run0     ] max|Δ|=  0.01562 (   0.60% of expected)  mean|Δ|= 0.000868  within tol=100.00%  -> PASS
+[sliding_attention_output run1     ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.000863  within tol=100.00%  -> PASS
+[sliding_attention_output run2     ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.000888  within tol=100.00%  -> PASS
+[sliding_attention_output run3     ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.000885  within tol=100.00%  -> PASS
+[sliding_attention_output run4     ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.000907  within tol=100.00%  -> PASS
+[sliding_attention_output run5     ] max|Δ|=  0.03125 (   0.75% of expected)  mean|Δ|= 0.000923  within tol=100.00%  -> PASS
+[sliding_attention_output run6     ] max|Δ|=  0.01562 (   1.33% of expected)  mean|Δ|= 0.000844  within tol=100.00%  -> PASS
+    median cycles=49221 (of 7 runs: [47675, 50481, 51577, 53345, 46519, 47663, 49221])
+
+==> decoder_feedforward
+[decoder_feedforward run0          ] max|Δ|=  0.00488 (   1.97% of expected)  mean|Δ|= 0.000669  within tol=100.00%  -> PASS
+[decoder_feedforward run1          ] max|Δ|=  0.00781 (   1.37% of expected)  mean|Δ|= 0.000930  within tol=100.00%  -> PASS
+[decoder_feedforward run2          ] max|Δ|=  0.01172 (   1.40% of expected)  mean|Δ|= 0.001009  within tol=100.00%  -> PASS
+[decoder_feedforward run3          ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000961  within tol=100.00%  -> PASS
+[decoder_feedforward run4          ] max|Δ|=  0.00781 (   1.54% of expected)  mean|Δ|= 0.000717  within tol=100.00%  -> PASS
+[decoder_feedforward run5          ] max|Δ|=  0.00781 (   1.16% of expected)  mean|Δ|= 0.000781  within tol=100.00%  -> PASS
+[decoder_feedforward run6          ] max|Δ|=  0.00781 (   0.85% of expected)  mean|Δ|= 0.000814  within tol=100.00%  -> PASS
+    median cycles=227044 (of 7 runs: [230705, 227044, 231233, 225017, 229812, 225041, 218675])
+
+
+all 3 tests passed
+remote_entrypoint.sh: all kernel tests passed
+ops::sliding_project_qkv: 93249 cycles
+ops::sliding_attention_output: 49221 cycles
+ops::decoder_feedforward: 227044 cycles
+score: 7.1154
+submission completed

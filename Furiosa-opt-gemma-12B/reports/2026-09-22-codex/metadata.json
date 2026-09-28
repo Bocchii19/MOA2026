@@ -1,0 +1,159 @@
+{
+  "base_commit": "35b78383e2d2b1284a2f13e72c5f0bb07955029e",
+  "fixture_sha256": "cb288f25808150d8aa9fbf653bf1e65237e84b2a9b7d6674f6ff33ba07cb4461",
+  "score_baseline_product_estimate": 3.754e+17,
+  "scores_are": "results.json contains Arena estimates; official-results.json contains official median-of-seven grades",
+  "profile": "trace diagnostics and unchanged public harness with info profiling, identified per result",
+  "binaries": {
+    "control-trace.bin": "23c5038808dec7afd9238971207a502207ce6a239b9cb0cbe00c05cf99ee2821",
+    "k1-pairedrope-trace.bin": "c0c9dd7671ca01d3629c033395bb47e8e46f52560b302bbcf7e0916def6104ed",
+    "k3-splitgate-trace.bin": "8717aeecbfbdb6f121dfa89e78c91da06734889a355cadc0b5c8cd74e046e610",
+    "k2-single-read-trace.bin": "bc642bf1aa8801626aa1a40335f1a2aa96ed1d79692885bf9f000468a56ff65b",
+    "control.bin": "0b12067ef9c94a87e61750bcf8dd4eebd605bec6fa3c27236a251ecd3e88fe1b",
+    "k1-pairedrope.bin": "b909a73584b578e315d36856c031b2a326d238006e2fd8030cf9b3b1856f46ae",
+    "final.bin": "dbdf3da25955e2366c3148e80324e1f36b56680c5450da32de1080bf7a74d8fb"
+  },
+  "candidate_patch_sha256": "00792c5031e6ca8e295740849f962e18711a86787fa0998ccf09767be9bcf396",
+  "rustc": "rustc 1.97.0-nightly (f53b654a8 2026-04-30)",
+  "frozen_tests_sha256": "16996fbfffe54b4cee3241f24b6d2d9e49a66e453e30d0d2baf81bf0b8be442d",
+  "candidate_frozen_tests_unchanged": true,
+  "final_accepted_source_sha256": "d00f6a650d235777c02c798f0d712d9e355a6626a1d8c46064c3981228f14a34",
+  "final_all_kernels_compile_success": true,
+  "device_kernels": {
+    "sliding_project_qkv": {
+      "control": {
+        "sha256": "ea482b36a851dc92e2828a4aeb3bf5dcb6a9f47bc63110dc198dfa9ea2033200",
+        "size": 140011
+      },
+      "candidate": {
+        "sha256": "74cc144d38bbc5f048cb52d767195b677477ffebe8a725bfbce5d3d68a88470a",
+        "size": 140203
+      },
+      "final": {
+        "sha256": "74cc144d38bbc5f048cb52d767195b677477ffebe8a725bfbce5d3d68a88470a",
+        "size": 140203
+      }
+    },
+    "sliding_attention_output": {
+      "control": {
+        "sha256": "a64200ef002cbfc44ce079e585570cfd1b661f47c92d23e123db6e2f008d2092",
+        "size": 67681
+      },
+      "candidate": {
+        "sha256": "a64200ef002cbfc44ce079e585570cfd1b661f47c92d23e123db6e2f008d2092",
+        "size": 67681
+      },
+      "final": {
+        "sha256": "a64200ef002cbfc44ce079e585570cfd1b661f47c92d23e123db6e2f008d2092",
+        "size": 67681
+      }
+    },
+    "decoder_feedforward": {
+      "control": {
+        "sha256": "fb5f05748e117f5dbb9899a2a5a47707dd42dbcf9fc6eea9c834119de671e0c8",
+        "size": 174267
+      },
+      "candidate": {
+        "sha256": "fb5f05748e117f5dbb9899a2a5a47707dd42dbcf9fc6eea9c834119de671e0c8",
+        "size": 174267
+      },
+      "final": {
+        "sha256": "fb5f05748e117f5dbb9899a2a5a47707dd42dbcf9fc6eea9c834119de671e0c8",
+        "size": 174267
+      }
+    }
+  },
+  "official_candidate_submission": "dd0580b2",
+  "official_candidate_result": {
+    "submission": "dd0580b2",
+    "score": 7.1154,
+    "correctness": "PASS",
+    "runs_per_kernel": 7,
+    "timing_statistic": "median",
+    "kernels": {
+      "sliding_project_qkv": {
+        "median_cycles": 93249,
+        "runs": [
+          91451,
+          93131,
+          92077,
+          93983,
+          94141,
+          93249,
+          94957
+        ]
+      },
+      "sliding_attention_output": {
+        "median_cycles": 49221,
+        "runs": [
+          47675,
+          50481,
+          51577,
+          53345,
+          46519,
+          47663,
+          49221
+        ]
+      },
+      "decoder_feedforward": {
+        "median_cycles": 227044,
+        "runs": [
+          230705,
+          227044,
+          231233,
+          225017,
+          229812,
+          225041,
+          218675
+        ]
+      }
+    },
+    "log": "official-candidate.log"
+  },
+  "official_best_at_start": {
+    "submission": "4912db55",
+    "score": 7.4924,
+    "correctness": "PASS",
+    "runs_per_kernel": 7,
+    "timing_statistic": "median",
+    "kernels": {
+      "sliding_project_qkv": {
+        "median_cycles": 89120,
+        "runs": [
+          96743,
+          82448,
+          89120,
+          88542,
+          84388,
+          91516,
+          92672
+        ]
+      },
+      "sliding_attention_output": {
+        "median_cycles": 43535,
+        "runs": [
+          42345,
+          41765,
+          43535,
+          44067,
+          44679,
+          44793,
+          42603
+        ]
+      },
+      "decoder_feedforward": {
+        "median_cycles": 230049,
+        "runs": [
+          250948,
+          230049,
+          219155,
+          230406,
+          223075,
+          223547,
+          230106
+        ]
+      }
+    },
+    "log": "official-best-at-start.log"
+  }
+}

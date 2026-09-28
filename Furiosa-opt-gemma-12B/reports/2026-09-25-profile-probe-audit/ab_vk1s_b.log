@@ -1,0 +1,432 @@
+@@AB_BEGIN 1 A@@
+NPU kernel tests -- 3 cases x 21 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+[sliding_project_qkv q run9        ] max|Δ|=  0.03125 (   1.52% of expected)  mean|Δ|= 0.001120  within tol=100.00%  -> PASS
+[sliding_project_qkv k run9        ] max|Δ|=  0.01562 (   1.10% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv v run9        ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run10       ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.001066  within tol=100.00%  -> PASS
+[sliding_project_qkv k run10       ] max|Δ|=  0.01562 (   0.73% of expected)  mean|Δ|= 0.001055  within tol=100.00%  -> PASS
+[sliding_project_qkv v run10       ] max|Δ|=  0.03125 (   0.78% of expected)  mean|Δ|= 0.001404  within tol=100.00%  -> PASS
+[sliding_project_qkv q run11       ] max|Δ|=  0.03125 (   1.18% of expected)  mean|Δ|= 0.001015  within tol=100.00%  -> PASS
+[sliding_project_qkv k run11       ] max|Δ|=  0.01562 (   0.77% of expected)  mean|Δ|= 0.001009  within tol=100.00%  -> PASS
+[sliding_project_qkv v run11       ] max|Δ|=  0.01562 (   0.50% of expected)  mean|Δ|= 0.001245  within tol=100.00%  -> PASS
+[sliding_project_qkv q run12       ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001113  within tol=100.00%  -> PASS
+[sliding_project_qkv k run12       ] max|Δ|=  0.01562 (   0.94% of expected)  mean|Δ|= 0.001037  within tol=100.00%  -> PASS
+[sliding_project_qkv v run12       ] max|Δ|=  0.01562 (   0.58% of expected)  mean|Δ|= 0.001221  within tol=100.00%  -> PASS
+[sliding_project_qkv q run13       ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001101  within tol=100.00%  -> PASS
+[sliding_project_qkv k run13       ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.001130  within tol=100.00%  -> PASS
+[sliding_project_qkv v run13       ] max|Δ|=  0.03125 (   0.68% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run14       ] max|Δ|=  0.02344 (   1.21% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv k run14       ] max|Δ|=  0.01562 (   1.01% of expected)  mean|Δ|= 0.001031  within tol=100.00%  -> PASS
+[sliding_project_qkv v run14       ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001288  within tol=100.00%  -> PASS
+[sliding_project_qkv q run15       ] max|Δ|=  0.06250 (   1.47% of expected)  mean|Δ|= 0.001047  within tol=100.00%  -> PASS
+[sliding_project_qkv k run15       ] max|Δ|=  0.03125 (   0.94% of expected)  mean|Δ|= 0.001081  within tol=100.00%  -> PASS
+[sliding_project_qkv v run15       ] max|Δ|=  0.03125 (   0.75% of expected)  mean|Δ|= 0.001391  within tol=100.00%  -> PASS
+[sliding_project_qkv q run16       ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001103  within tol=100.00%  -> PASS
+[sliding_project_qkv k run16       ] max|Δ|=  0.01562 (   0.98% of expected)  mean|Δ|= 0.001087  within tol=100.00%  -> PASS
+[sliding_project_qkv v run16       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run17       ] max|Δ|=  0.01562 (   1.13% of expected)  mean|Δ|= 0.000999  within tol=100.00%  -> PASS
+[sliding_project_qkv k run17       ] max|Δ|=  0.01562 (   0.56% of expected)  mean|Δ|= 0.001187  within tol=100.00%  -> PASS
+[sliding_project_qkv v run17       ] max|Δ|=  0.01562 (   0.67% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run18       ] max|Δ|=  0.02344 (   1.29% of expected)  mean|Δ|= 0.000997  within tol=100.00%  -> PASS
+[sliding_project_qkv k run18       ] max|Δ|=  0.03125 (   1.41% of expected)  mean|Δ|= 0.000979  within tol=100.00%  -> PASS
+[sliding_project_qkv v run18       ] max|Δ|=  0.01562 (   0.51% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run19       ] max|Δ|=  0.03125 (   0.87% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv k run19       ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001030  within tol=100.00%  -> PASS
+[sliding_project_qkv v run19       ] max|Δ|=  0.03125 (   0.65% of expected)  mean|Δ|= 0.001176  within tol=100.00%  -> PASS
+[sliding_project_qkv q run20       ] max|Δ|=  0.02344 (   1.51% of expected)  mean|Δ|= 0.001021  within tol=100.00%  -> PASS
+[sliding_project_qkv k run20       ] max|Δ|=  0.01562 (   0.47% of expected)  mean|Δ|= 0.001091  within tol=100.00%  -> PASS
+[sliding_project_qkv v run20       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001281  within tol=100.00%  -> PASS
+    median cycles=72024 min=71218 p25=71602 (of 21 runs: [75978, 71602, 72024, 71989, 72333, 72135, 71929, 73111, 71714, 71218, 72806, 71391, 72201, 73469, 72036, 72748, 71378, 71761, 71330, 71228, 72146])
+
+
+all 3 tests passed
+@@AB_END 1 A rc=0@@
+@@AB_BEGIN 1 B@@
+NPU kernel tests -- 3 cases x 21 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+[sliding_project_qkv q run9        ] max|Δ|=  0.03125 (   1.52% of expected)  mean|Δ|= 0.001120  within tol=100.00%  -> PASS
+[sliding_project_qkv k run9        ] max|Δ|=  0.01562 (   1.10% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv v run9        ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run10       ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.001066  within tol=100.00%  -> PASS
+[sliding_project_qkv k run10       ] max|Δ|=  0.01562 (   0.73% of expected)  mean|Δ|= 0.001055  within tol=100.00%  -> PASS
+[sliding_project_qkv v run10       ] max|Δ|=  0.03125 (   0.78% of expected)  mean|Δ|= 0.001404  within tol=100.00%  -> PASS
+[sliding_project_qkv q run11       ] max|Δ|=  0.03125 (   1.18% of expected)  mean|Δ|= 0.001015  within tol=100.00%  -> PASS
+[sliding_project_qkv k run11       ] max|Δ|=  0.01562 (   0.77% of expected)  mean|Δ|= 0.001009  within tol=100.00%  -> PASS
+[sliding_project_qkv v run11       ] max|Δ|=  0.01562 (   0.50% of expected)  mean|Δ|= 0.001245  within tol=100.00%  -> PASS
+[sliding_project_qkv q run12       ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001113  within tol=100.00%  -> PASS
+[sliding_project_qkv k run12       ] max|Δ|=  0.01562 (   0.94% of expected)  mean|Δ|= 0.001037  within tol=100.00%  -> PASS
+[sliding_project_qkv v run12       ] max|Δ|=  0.01562 (   0.58% of expected)  mean|Δ|= 0.001221  within tol=100.00%  -> PASS
+[sliding_project_qkv q run13       ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001101  within tol=100.00%  -> PASS
+[sliding_project_qkv k run13       ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.001130  within tol=100.00%  -> PASS
+[sliding_project_qkv v run13       ] max|Δ|=  0.03125 (   0.68% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run14       ] max|Δ|=  0.02344 (   1.21% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv k run14       ] max|Δ|=  0.01562 (   1.01% of expected)  mean|Δ|= 0.001031  within tol=100.00%  -> PASS
+[sliding_project_qkv v run14       ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001288  within tol=100.00%  -> PASS
+[sliding_project_qkv q run15       ] max|Δ|=  0.06250 (   1.47% of expected)  mean|Δ|= 0.001047  within tol=100.00%  -> PASS
+[sliding_project_qkv k run15       ] max|Δ|=  0.03125 (   0.94% of expected)  mean|Δ|= 0.001081  within tol=100.00%  -> PASS
+[sliding_project_qkv v run15       ] max|Δ|=  0.03125 (   0.75% of expected)  mean|Δ|= 0.001391  within tol=100.00%  -> PASS
+[sliding_project_qkv q run16       ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001103  within tol=100.00%  -> PASS
+[sliding_project_qkv k run16       ] max|Δ|=  0.01562 (   0.98% of expected)  mean|Δ|= 0.001087  within tol=100.00%  -> PASS
+[sliding_project_qkv v run16       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run17       ] max|Δ|=  0.01562 (   1.13% of expected)  mean|Δ|= 0.000999  within tol=100.00%  -> PASS
+[sliding_project_qkv k run17       ] max|Δ|=  0.01562 (   0.56% of expected)  mean|Δ|= 0.001187  within tol=100.00%  -> PASS
+[sliding_project_qkv v run17       ] max|Δ|=  0.01562 (   0.67% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run18       ] max|Δ|=  0.02344 (   1.29% of expected)  mean|Δ|= 0.000997  within tol=100.00%  -> PASS
+[sliding_project_qkv k run18       ] max|Δ|=  0.03125 (   1.41% of expected)  mean|Δ|= 0.000979  within tol=100.00%  -> PASS
+[sliding_project_qkv v run18       ] max|Δ|=  0.01562 (   0.51% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run19       ] max|Δ|=  0.03125 (   0.87% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv k run19       ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001030  within tol=100.00%  -> PASS
+[sliding_project_qkv v run19       ] max|Δ|=  0.03125 (   0.65% of expected)  mean|Δ|= 0.001176  within tol=100.00%  -> PASS
+[sliding_project_qkv q run20       ] max|Δ|=  0.02344 (   1.51% of expected)  mean|Δ|= 0.001021  within tol=100.00%  -> PASS
+[sliding_project_qkv k run20       ] max|Δ|=  0.01562 (   0.47% of expected)  mean|Δ|= 0.001091  within tol=100.00%  -> PASS
+[sliding_project_qkv v run20       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001281  within tol=100.00%  -> PASS
+    median cycles=69700 min=68769 p25=69449 (of 21 runs: [73377, 69501, 69982, 69741, 69449, 69748, 69964, 69000, 69755, 69632, 68769, 69906, 69676, 69444, 69691, 69363, 69763, 70514, 69268, 69700, 70307])
+
+
+all 3 tests passed
+@@AB_END 1 B rc=0@@
+@@AB_BEGIN 2 A@@
+NPU kernel tests -- 3 cases x 21 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+[sliding_project_qkv q run9        ] max|Δ|=  0.03125 (   1.52% of expected)  mean|Δ|= 0.001120  within tol=100.00%  -> PASS
+[sliding_project_qkv k run9        ] max|Δ|=  0.01562 (   1.10% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv v run9        ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run10       ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.001066  within tol=100.00%  -> PASS
+[sliding_project_qkv k run10       ] max|Δ|=  0.01562 (   0.73% of expected)  mean|Δ|= 0.001055  within tol=100.00%  -> PASS
+[sliding_project_qkv v run10       ] max|Δ|=  0.03125 (   0.78% of expected)  mean|Δ|= 0.001404  within tol=100.00%  -> PASS
+[sliding_project_qkv q run11       ] max|Δ|=  0.03125 (   1.18% of expected)  mean|Δ|= 0.001015  within tol=100.00%  -> PASS
+[sliding_project_qkv k run11       ] max|Δ|=  0.01562 (   0.77% of expected)  mean|Δ|= 0.001009  within tol=100.00%  -> PASS
+[sliding_project_qkv v run11       ] max|Δ|=  0.01562 (   0.50% of expected)  mean|Δ|= 0.001245  within tol=100.00%  -> PASS
+[sliding_project_qkv q run12       ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001113  within tol=100.00%  -> PASS
+[sliding_project_qkv k run12       ] max|Δ|=  0.01562 (   0.94% of expected)  mean|Δ|= 0.001037  within tol=100.00%  -> PASS
+[sliding_project_qkv v run12       ] max|Δ|=  0.01562 (   0.58% of expected)  mean|Δ|= 0.001221  within tol=100.00%  -> PASS
+[sliding_project_qkv q run13       ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001101  within tol=100.00%  -> PASS
+[sliding_project_qkv k run13       ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.001130  within tol=100.00%  -> PASS
+[sliding_project_qkv v run13       ] max|Δ|=  0.03125 (   0.68% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run14       ] max|Δ|=  0.02344 (   1.21% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv k run14       ] max|Δ|=  0.01562 (   1.01% of expected)  mean|Δ|= 0.001031  within tol=100.00%  -> PASS
+[sliding_project_qkv v run14       ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001288  within tol=100.00%  -> PASS
+[sliding_project_qkv q run15       ] max|Δ|=  0.06250 (   1.47% of expected)  mean|Δ|= 0.001047  within tol=100.00%  -> PASS
+[sliding_project_qkv k run15       ] max|Δ|=  0.03125 (   0.94% of expected)  mean|Δ|= 0.001081  within tol=100.00%  -> PASS
+[sliding_project_qkv v run15       ] max|Δ|=  0.03125 (   0.75% of expected)  mean|Δ|= 0.001391  within tol=100.00%  -> PASS
+[sliding_project_qkv q run16       ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001103  within tol=100.00%  -> PASS
+[sliding_project_qkv k run16       ] max|Δ|=  0.01562 (   0.98% of expected)  mean|Δ|= 0.001087  within tol=100.00%  -> PASS
+[sliding_project_qkv v run16       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run17       ] max|Δ|=  0.01562 (   1.13% of expected)  mean|Δ|= 0.000999  within tol=100.00%  -> PASS
+[sliding_project_qkv k run17       ] max|Δ|=  0.01562 (   0.56% of expected)  mean|Δ|= 0.001187  within tol=100.00%  -> PASS
+[sliding_project_qkv v run17       ] max|Δ|=  0.01562 (   0.67% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run18       ] max|Δ|=  0.02344 (   1.29% of expected)  mean|Δ|= 0.000997  within tol=100.00%  -> PASS
+[sliding_project_qkv k run18       ] max|Δ|=  0.03125 (   1.41% of expected)  mean|Δ|= 0.000979  within tol=100.00%  -> PASS
+[sliding_project_qkv v run18       ] max|Δ|=  0.01562 (   0.51% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run19       ] max|Δ|=  0.03125 (   0.87% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv k run19       ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001030  within tol=100.00%  -> PASS
+[sliding_project_qkv v run19       ] max|Δ|=  0.03125 (   0.65% of expected)  mean|Δ|= 0.001176  within tol=100.00%  -> PASS
+[sliding_project_qkv q run20       ] max|Δ|=  0.02344 (   1.51% of expected)  mean|Δ|= 0.001021  within tol=100.00%  -> PASS
+[sliding_project_qkv k run20       ] max|Δ|=  0.01562 (   0.47% of expected)  mean|Δ|= 0.001091  within tol=100.00%  -> PASS
+[sliding_project_qkv v run20       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001281  within tol=100.00%  -> PASS
+    median cycles=71884 min=71231 p25=71454 (of 21 runs: [74968, 72121, 71492, 72217, 73033, 71824, 71813, 72200, 72034, 72242, 72004, 71266, 71604, 71884, 72101, 71404, 71973, 71366, 71431, 71231, 71454])
+
+
+all 3 tests passed
+@@AB_END 2 A rc=0@@
+@@AB_BEGIN 2 B@@
+NPU kernel tests -- 3 cases x 21 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+[sliding_project_qkv q run9        ] max|Δ|=  0.03125 (   1.52% of expected)  mean|Δ|= 0.001120  within tol=100.00%  -> PASS
+[sliding_project_qkv k run9        ] max|Δ|=  0.01562 (   1.10% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv v run9        ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run10       ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.001066  within tol=100.00%  -> PASS
+[sliding_project_qkv k run10       ] max|Δ|=  0.01562 (   0.73% of expected)  mean|Δ|= 0.001055  within tol=100.00%  -> PASS
+[sliding_project_qkv v run10       ] max|Δ|=  0.03125 (   0.78% of expected)  mean|Δ|= 0.001404  within tol=100.00%  -> PASS
+[sliding_project_qkv q run11       ] max|Δ|=  0.03125 (   1.18% of expected)  mean|Δ|= 0.001015  within tol=100.00%  -> PASS
+[sliding_project_qkv k run11       ] max|Δ|=  0.01562 (   0.77% of expected)  mean|Δ|= 0.001009  within tol=100.00%  -> PASS
+[sliding_project_qkv v run11       ] max|Δ|=  0.01562 (   0.50% of expected)  mean|Δ|= 0.001245  within tol=100.00%  -> PASS
+[sliding_project_qkv q run12       ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001113  within tol=100.00%  -> PASS
+[sliding_project_qkv k run12       ] max|Δ|=  0.01562 (   0.94% of expected)  mean|Δ|= 0.001037  within tol=100.00%  -> PASS
+[sliding_project_qkv v run12       ] max|Δ|=  0.01562 (   0.58% of expected)  mean|Δ|= 0.001221  within tol=100.00%  -> PASS
+[sliding_project_qkv q run13       ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001101  within tol=100.00%  -> PASS
+[sliding_project_qkv k run13       ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.001130  within tol=100.00%  -> PASS
+[sliding_project_qkv v run13       ] max|Δ|=  0.03125 (   0.68% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run14       ] max|Δ|=  0.02344 (   1.21% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv k run14       ] max|Δ|=  0.01562 (   1.01% of expected)  mean|Δ|= 0.001031  within tol=100.00%  -> PASS
+[sliding_project_qkv v run14       ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001288  within tol=100.00%  -> PASS
+[sliding_project_qkv q run15       ] max|Δ|=  0.06250 (   1.47% of expected)  mean|Δ|= 0.001047  within tol=100.00%  -> PASS
+[sliding_project_qkv k run15       ] max|Δ|=  0.03125 (   0.94% of expected)  mean|Δ|= 0.001081  within tol=100.00%  -> PASS
+[sliding_project_qkv v run15       ] max|Δ|=  0.03125 (   0.75% of expected)  mean|Δ|= 0.001391  within tol=100.00%  -> PASS
+[sliding_project_qkv q run16       ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001103  within tol=100.00%  -> PASS
+[sliding_project_qkv k run16       ] max|Δ|=  0.01562 (   0.98% of expected)  mean|Δ|= 0.001087  within tol=100.00%  -> PASS
+[sliding_project_qkv v run16       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run17       ] max|Δ|=  0.01562 (   1.13% of expected)  mean|Δ|= 0.000999  within tol=100.00%  -> PASS
+[sliding_project_qkv k run17       ] max|Δ|=  0.01562 (   0.56% of expected)  mean|Δ|= 0.001187  within tol=100.00%  -> PASS
+[sliding_project_qkv v run17       ] max|Δ|=  0.01562 (   0.67% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run18       ] max|Δ|=  0.02344 (   1.29% of expected)  mean|Δ|= 0.000997  within tol=100.00%  -> PASS
+[sliding_project_qkv k run18       ] max|Δ|=  0.03125 (   1.41% of expected)  mean|Δ|= 0.000979  within tol=100.00%  -> PASS
+[sliding_project_qkv v run18       ] max|Δ|=  0.01562 (   0.51% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run19       ] max|Δ|=  0.03125 (   0.87% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv k run19       ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001030  within tol=100.00%  -> PASS
+[sliding_project_qkv v run19       ] max|Δ|=  0.03125 (   0.65% of expected)  mean|Δ|= 0.001176  within tol=100.00%  -> PASS
+[sliding_project_qkv q run20       ] max|Δ|=  0.02344 (   1.51% of expected)  mean|Δ|= 0.001021  within tol=100.00%  -> PASS
+[sliding_project_qkv k run20       ] max|Δ|=  0.01562 (   0.47% of expected)  mean|Δ|= 0.001091  within tol=100.00%  -> PASS
+[sliding_project_qkv v run20       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001281  within tol=100.00%  -> PASS
+    median cycles=69862 min=68872 p25=69519 (of 21 runs: [73082, 69539, 69437, 68975, 69957, 69519, 69862, 69793, 68872, 70240, 69571, 70063, 70081, 70058, 69886, 70189, 69629, 69871, 69221, 70665, 69137])
+
+
+all 3 tests passed
+@@AB_END 2 B rc=0@@
+@@AB_BEGIN 3 A@@
+NPU kernel tests -- 3 cases x 21 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+[sliding_project_qkv q run9        ] max|Δ|=  0.03125 (   1.52% of expected)  mean|Δ|= 0.001120  within tol=100.00%  -> PASS
+[sliding_project_qkv k run9        ] max|Δ|=  0.01562 (   1.10% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv v run9        ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run10       ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.001066  within tol=100.00%  -> PASS
+[sliding_project_qkv k run10       ] max|Δ|=  0.01562 (   0.73% of expected)  mean|Δ|= 0.001055  within tol=100.00%  -> PASS
+[sliding_project_qkv v run10       ] max|Δ|=  0.03125 (   0.78% of expected)  mean|Δ|= 0.001404  within tol=100.00%  -> PASS
+[sliding_project_qkv q run11       ] max|Δ|=  0.03125 (   1.18% of expected)  mean|Δ|= 0.001015  within tol=100.00%  -> PASS
+[sliding_project_qkv k run11       ] max|Δ|=  0.01562 (   0.77% of expected)  mean|Δ|= 0.001009  within tol=100.00%  -> PASS
+[sliding_project_qkv v run11       ] max|Δ|=  0.01562 (   0.50% of expected)  mean|Δ|= 0.001245  within tol=100.00%  -> PASS
+[sliding_project_qkv q run12       ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001113  within tol=100.00%  -> PASS
+[sliding_project_qkv k run12       ] max|Δ|=  0.01562 (   0.94% of expected)  mean|Δ|= 0.001037  within tol=100.00%  -> PASS
+[sliding_project_qkv v run12       ] max|Δ|=  0.01562 (   0.58% of expected)  mean|Δ|= 0.001221  within tol=100.00%  -> PASS
+[sliding_project_qkv q run13       ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001101  within tol=100.00%  -> PASS
+[sliding_project_qkv k run13       ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.001130  within tol=100.00%  -> PASS
+[sliding_project_qkv v run13       ] max|Δ|=  0.03125 (   0.68% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run14       ] max|Δ|=  0.02344 (   1.21% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv k run14       ] max|Δ|=  0.01562 (   1.01% of expected)  mean|Δ|= 0.001031  within tol=100.00%  -> PASS
+[sliding_project_qkv v run14       ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001288  within tol=100.00%  -> PASS
+[sliding_project_qkv q run15       ] max|Δ|=  0.06250 (   1.47% of expected)  mean|Δ|= 0.001047  within tol=100.00%  -> PASS
+[sliding_project_qkv k run15       ] max|Δ|=  0.03125 (   0.94% of expected)  mean|Δ|= 0.001081  within tol=100.00%  -> PASS
+[sliding_project_qkv v run15       ] max|Δ|=  0.03125 (   0.75% of expected)  mean|Δ|= 0.001391  within tol=100.00%  -> PASS
+[sliding_project_qkv q run16       ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001103  within tol=100.00%  -> PASS
+[sliding_project_qkv k run16       ] max|Δ|=  0.01562 (   0.98% of expected)  mean|Δ|= 0.001087  within tol=100.00%  -> PASS
+[sliding_project_qkv v run16       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run17       ] max|Δ|=  0.01562 (   1.13% of expected)  mean|Δ|= 0.000999  within tol=100.00%  -> PASS
+[sliding_project_qkv k run17       ] max|Δ|=  0.01562 (   0.56% of expected)  mean|Δ|= 0.001187  within tol=100.00%  -> PASS
+[sliding_project_qkv v run17       ] max|Δ|=  0.01562 (   0.67% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run18       ] max|Δ|=  0.02344 (   1.29% of expected)  mean|Δ|= 0.000997  within tol=100.00%  -> PASS
+[sliding_project_qkv k run18       ] max|Δ|=  0.03125 (   1.41% of expected)  mean|Δ|= 0.000979  within tol=100.00%  -> PASS
+[sliding_project_qkv v run18       ] max|Δ|=  0.01562 (   0.51% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run19       ] max|Δ|=  0.03125 (   0.87% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv k run19       ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001030  within tol=100.00%  -> PASS
+[sliding_project_qkv v run19       ] max|Δ|=  0.03125 (   0.65% of expected)  mean|Δ|= 0.001176  within tol=100.00%  -> PASS
+[sliding_project_qkv q run20       ] max|Δ|=  0.02344 (   1.51% of expected)  mean|Δ|= 0.001021  within tol=100.00%  -> PASS
+[sliding_project_qkv k run20       ] max|Δ|=  0.01562 (   0.47% of expected)  mean|Δ|= 0.001091  within tol=100.00%  -> PASS
+[sliding_project_qkv v run20       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001281  within tol=100.00%  -> PASS
+    median cycles=71928 min=71040 p25=71707 (of 21 runs: [76258, 71859, 71928, 73172, 71291, 71707, 72792, 71040, 72747, 72459, 72379, 71827, 71316, 72088, 71803, 71437, 71992, 71884, 71973, 71148, 72166])
+
+
+all 3 tests passed
+@@AB_END 3 A rc=0@@
+@@AB_BEGIN 3 B@@
+NPU kernel tests -- 3 cases x 21 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q run0        ] max|Δ|=  0.02344 (   1.38% of expected)  mean|Δ|= 0.001158  within tol=100.00%  -> PASS
+[sliding_project_qkv k run0        ] max|Δ|=  0.02344 (   1.18% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv v run0        ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001286  within tol=100.00%  -> PASS
+[sliding_project_qkv q run1        ] max|Δ|=  0.03125 (   1.01% of expected)  mean|Δ|= 0.001077  within tol=100.00%  -> PASS
+[sliding_project_qkv k run1        ] max|Δ|=  0.03125 (   1.28% of expected)  mean|Δ|= 0.000996  within tol=100.00%  -> PASS
+[sliding_project_qkv v run1        ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001247  within tol=100.00%  -> PASS
+[sliding_project_qkv q run2        ] max|Δ|=  0.03125 (   1.35% of expected)  mean|Δ|= 0.001182  within tol=100.00%  -> PASS
+[sliding_project_qkv k run2        ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.000985  within tol=100.00%  -> PASS
+[sliding_project_qkv v run2        ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001365  within tol=100.00%  -> PASS
+[sliding_project_qkv q run3        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001093  within tol=100.00%  -> PASS
+[sliding_project_qkv k run3        ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001156  within tol=100.00%  -> PASS
+[sliding_project_qkv v run3        ] max|Δ|=  0.03125 (   1.09% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run4        ] max|Δ|=  0.03125 (   1.26% of expected)  mean|Δ|= 0.001014  within tol=100.00%  -> PASS
+[sliding_project_qkv k run4        ] max|Δ|=  0.01562 (   0.68% of expected)  mean|Δ|= 0.000994  within tol=100.00%  -> PASS
+[sliding_project_qkv v run4        ] max|Δ|=  0.03125 (   0.71% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run5        ] max|Δ|=  0.03125 (   1.49% of expected)  mean|Δ|= 0.001163  within tol=100.00%  -> PASS
+[sliding_project_qkv k run5        ] max|Δ|=  0.03125 (   0.82% of expected)  mean|Δ|= 0.001085  within tol=100.00%  -> PASS
+[sliding_project_qkv v run5        ] max|Δ|=  0.01562 (   0.62% of expected)  mean|Δ|= 0.001283  within tol=100.00%  -> PASS
+[sliding_project_qkv q run6        ] max|Δ|=  0.03125 (   1.12% of expected)  mean|Δ|= 0.001086  within tol=100.00%  -> PASS
+[sliding_project_qkv k run6        ] max|Δ|=  0.03125 (   1.50% of expected)  mean|Δ|= 0.001185  within tol=100.00%  -> PASS
+[sliding_project_qkv v run6        ] max|Δ|=  0.03125 (   0.73% of expected)  mean|Δ|= 0.001189  within tol=100.00%  -> PASS
+[sliding_project_qkv q run7        ] max|Δ|=  0.01562 (   0.66% of expected)  mean|Δ|= 0.001061  within tol=100.00%  -> PASS
+[sliding_project_qkv k run7        ] max|Δ|=  0.04688 (   1.21% of expected)  mean|Δ|= 0.001115  within tol=100.00%  -> PASS
+[sliding_project_qkv v run7        ] max|Δ|=  0.03125 (   0.70% of expected)  mean|Δ|= 0.001334  within tol=100.00%  -> PASS
+[sliding_project_qkv q run8        ] max|Δ|=  0.03125 (   1.45% of expected)  mean|Δ|= 0.001059  within tol=100.00%  -> PASS
+[sliding_project_qkv k run8        ] max|Δ|=  0.03125 (   1.44% of expected)  mean|Δ|= 0.001129  within tol=100.00%  -> PASS
+[sliding_project_qkv v run8        ] max|Δ|=  0.03125 (   0.85% of expected)  mean|Δ|= 0.001331  within tol=100.00%  -> PASS
+[sliding_project_qkv q run9        ] max|Δ|=  0.03125 (   1.52% of expected)  mean|Δ|= 0.001120  within tol=100.00%  -> PASS
+[sliding_project_qkv k run9        ] max|Δ|=  0.01562 (   1.10% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv v run9        ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001250  within tol=100.00%  -> PASS
+[sliding_project_qkv q run10       ] max|Δ|=  0.03125 (   0.62% of expected)  mean|Δ|= 0.001066  within tol=100.00%  -> PASS
+[sliding_project_qkv k run10       ] max|Δ|=  0.01562 (   0.73% of expected)  mean|Δ|= 0.001055  within tol=100.00%  -> PASS
+[sliding_project_qkv v run10       ] max|Δ|=  0.03125 (   0.78% of expected)  mean|Δ|= 0.001404  within tol=100.00%  -> PASS
+[sliding_project_qkv q run11       ] max|Δ|=  0.03125 (   1.18% of expected)  mean|Δ|= 0.001015  within tol=100.00%  -> PASS
+[sliding_project_qkv k run11       ] max|Δ|=  0.01562 (   0.77% of expected)  mean|Δ|= 0.001009  within tol=100.00%  -> PASS
+[sliding_project_qkv v run11       ] max|Δ|=  0.01562 (   0.50% of expected)  mean|Δ|= 0.001245  within tol=100.00%  -> PASS
+[sliding_project_qkv q run12       ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001113  within tol=100.00%  -> PASS
+[sliding_project_qkv k run12       ] max|Δ|=  0.01562 (   0.94% of expected)  mean|Δ|= 0.001037  within tol=100.00%  -> PASS
+[sliding_project_qkv v run12       ] max|Δ|=  0.01562 (   0.58% of expected)  mean|Δ|= 0.001221  within tol=100.00%  -> PASS
+[sliding_project_qkv q run13       ] max|Δ|=  0.03125 (   0.72% of expected)  mean|Δ|= 0.001101  within tol=100.00%  -> PASS
+[sliding_project_qkv k run13       ] max|Δ|=  0.01562 (   0.69% of expected)  mean|Δ|= 0.001130  within tol=100.00%  -> PASS
+[sliding_project_qkv v run13       ] max|Δ|=  0.03125 (   0.68% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run14       ] max|Δ|=  0.02344 (   1.21% of expected)  mean|Δ|= 0.001071  within tol=100.00%  -> PASS
+[sliding_project_qkv k run14       ] max|Δ|=  0.01562 (   1.01% of expected)  mean|Δ|= 0.001031  within tol=100.00%  -> PASS
+[sliding_project_qkv v run14       ] max|Δ|=  0.03125 (   0.74% of expected)  mean|Δ|= 0.001288  within tol=100.00%  -> PASS
+[sliding_project_qkv q run15       ] max|Δ|=  0.06250 (   1.47% of expected)  mean|Δ|= 0.001047  within tol=100.00%  -> PASS
+[sliding_project_qkv k run15       ] max|Δ|=  0.03125 (   0.94% of expected)  mean|Δ|= 0.001081  within tol=100.00%  -> PASS
+[sliding_project_qkv v run15       ] max|Δ|=  0.03125 (   0.75% of expected)  mean|Δ|= 0.001391  within tol=100.00%  -> PASS
+[sliding_project_qkv q run16       ] max|Δ|=  0.03125 (   1.02% of expected)  mean|Δ|= 0.001103  within tol=100.00%  -> PASS
+[sliding_project_qkv k run16       ] max|Δ|=  0.01562 (   0.98% of expected)  mean|Δ|= 0.001087  within tol=100.00%  -> PASS
+[sliding_project_qkv v run16       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001329  within tol=100.00%  -> PASS
+[sliding_project_qkv q run17       ] max|Δ|=  0.01562 (   1.13% of expected)  mean|Δ|= 0.000999  within tol=100.00%  -> PASS
+[sliding_project_qkv k run17       ] max|Δ|=  0.01562 (   0.56% of expected)  mean|Δ|= 0.001187  within tol=100.00%  -> PASS
+[sliding_project_qkv v run17       ] max|Δ|=  0.01562 (   0.67% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run18       ] max|Δ|=  0.02344 (   1.29% of expected)  mean|Δ|= 0.000997  within tol=100.00%  -> PASS
+[sliding_project_qkv k run18       ] max|Δ|=  0.03125 (   1.41% of expected)  mean|Δ|= 0.000979  within tol=100.00%  -> PASS
+[sliding_project_qkv v run18       ] max|Δ|=  0.01562 (   0.51% of expected)  mean|Δ|= 0.001375  within tol=100.00%  -> PASS
+[sliding_project_qkv q run19       ] max|Δ|=  0.03125 (   0.87% of expected)  mean|Δ|= 0.001018  within tol=100.00%  -> PASS
+[sliding_project_qkv k run19       ] max|Δ|=  0.01562 (   0.65% of expected)  mean|Δ|= 0.001030  within tol=100.00%  -> PASS
+[sliding_project_qkv v run19       ] max|Δ|=  0.03125 (   0.65% of expected)  mean|Δ|= 0.001176  within tol=100.00%  -> PASS
+[sliding_project_qkv q run20       ] max|Δ|=  0.02344 (   1.51% of expected)  mean|Δ|= 0.001021  within tol=100.00%  -> PASS
+[sliding_project_qkv k run20       ] max|Δ|=  0.01562 (   0.47% of expected)  mean|Δ|= 0.001091  within tol=100.00%  -> PASS
+[sliding_project_qkv v run20       ] max|Δ|=  0.03125 (   0.77% of expected)  mean|Δ|= 0.001281  within tol=100.00%  -> PASS
+    median cycles=69711 min=68515 p25=69435 (of 21 runs: [72799, 69776, 69850, 69295, 69770, 69438, 69592, 70215, 70055, 70384, 69272, 70478, 69431, 70251, 69662, 68515, 69711, 69968, 69435, 69460, 69358])
+
+
+all 3 tests passed
+@@AB_END 3 B rc=0@@

@@ -1,0 +1,80 @@
+@@AB_BEGIN 1 A@@
+NPU kernel tests -- 3 cases x 31 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> decoder_feedforward
+[decoder_feedforward run0          ] max|Δ|=  0.00488 (   2.25% of expected)  mean|Δ|= 0.000641  within tol=100.00%  -> PASS
+[decoder_feedforward run1          ] max|Δ|=  0.00781 (   1.13% of expected)  mean|Δ|= 0.000884  within tol=100.00%  -> PASS
+[decoder_feedforward run2          ] max|Δ|=  0.00781 (   1.22% of expected)  mean|Δ|= 0.000962  within tol=100.00%  -> PASS
+[decoder_feedforward run3          ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000928  within tol=100.00%  -> PASS
+[decoder_feedforward run4          ] max|Δ|=  0.00781 (   0.75% of expected)  mean|Δ|= 0.000687  within tol=100.00%  -> PASS
+[decoder_feedforward run5          ] max|Δ|=  0.00781 (   1.16% of expected)  mean|Δ|= 0.000721  within tol=100.00%  -> PASS
+[decoder_feedforward run6          ] max|Δ|=  0.00586 (   1.40% of expected)  mean|Δ|= 0.000781  within tol=100.00%  -> PASS
+[decoder_feedforward run7          ] max|Δ|=  0.00781 (   1.14% of expected)  mean|Δ|= 0.000734  within tol=100.00%  -> PASS
+[decoder_feedforward run8          ] max|Δ|=  0.00781 (   1.49% of expected)  mean|Δ|= 0.000721  within tol=100.00%  -> PASS
+[decoder_feedforward run9          ] max|Δ|=  0.00781 (   1.21% of expected)  mean|Δ|= 0.000827  within tol=100.00%  -> PASS
+[decoder_feedforward run10         ] max|Δ|=  0.00781 (   1.22% of expected)  mean|Δ|= 0.000633  within tol=100.00%  -> PASS
+[decoder_feedforward run11         ] max|Δ|=  0.00781 (   0.74% of expected)  mean|Δ|= 0.000766  within tol=100.00%  -> PASS
+[decoder_feedforward run12         ] max|Δ|=  0.00781 (   0.99% of expected)  mean|Δ|= 0.000618  within tol=100.00%  -> PASS
+[decoder_feedforward run13         ] max|Δ|=  0.01172 (   1.69% of expected)  mean|Δ|= 0.000921  within tol=100.00%  -> PASS
+[decoder_feedforward run14         ] max|Δ|=  0.00586 (   1.49% of expected)  mean|Δ|= 0.000588  within tol=100.00%  -> PASS
+[decoder_feedforward run15         ] max|Δ|=  0.00391 (   0.65% of expected)  mean|Δ|= 0.000591  within tol=100.00%  -> PASS
+[decoder_feedforward run16         ] max|Δ|=  0.00781 (   1.35% of expected)  mean|Δ|= 0.000806  within tol=100.00%  -> PASS
+[decoder_feedforward run17         ] max|Δ|=  0.00586 (   1.56% of expected)  mean|Δ|= 0.000643  within tol=100.00%  -> PASS
+[decoder_feedforward run18         ] max|Δ|=  0.01172 (   1.16% of expected)  mean|Δ|= 0.000871  within tol=100.00%  -> PASS
+[decoder_feedforward run19         ] max|Δ|=  0.00781 (   1.16% of expected)  mean|Δ|= 0.000848  within tol=100.00%  -> PASS
+[decoder_feedforward run20         ] max|Δ|=  0.00781 (   1.49% of expected)  mean|Δ|= 0.000646  within tol=100.00%  -> PASS
+[decoder_feedforward run21         ] max|Δ|=  0.00781 (   1.18% of expected)  mean|Δ|= 0.000712  within tol=100.00%  -> PASS
+[decoder_feedforward run22         ] max|Δ|=  0.00781 (   1.16% of expected)  mean|Δ|= 0.000919  within tol=100.00%  -> PASS
+[decoder_feedforward run23         ] max|Δ|=  0.00781 (   0.93% of expected)  mean|Δ|= 0.000790  within tol=100.00%  -> PASS
+[decoder_feedforward run24         ] max|Δ|=  0.00781 (   1.37% of expected)  mean|Δ|= 0.000630  within tol=100.00%  -> PASS
+[decoder_feedforward run25         ] max|Δ|=  0.00781 (   0.69% of expected)  mean|Δ|= 0.000884  within tol=100.00%  -> PASS
+[decoder_feedforward run26         ] max|Δ|=  0.00781 (   0.76% of expected)  mean|Δ|= 0.000877  within tol=100.00%  -> PASS
+[decoder_feedforward run27         ] max|Δ|=  0.00781 (   0.66% of expected)  mean|Δ|= 0.000937  within tol=100.00%  -> PASS
+[decoder_feedforward run28         ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000847  within tol=100.00%  -> PASS
+[decoder_feedforward run29         ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000773  within tol=100.00%  -> PASS
+[decoder_feedforward run30         ] max|Δ|=  0.00391 (   1.32% of expected)  mean|Δ|= 0.000451  within tol=100.00%  -> PASS
+    median cycles=208984 min=207191 p25=208653 (of 31 runs: [210121, 209624, 209330, 207191, 208709, 209120, 208831, 209369, 208936, 208984, 209278, 208234, 209091, 207953, 209738, 210558, 208653, 208882, 208677, 207898, 208717, 211083, 208339, 210169, 208473, 209077, 208770, 209387, 209224, 207890, 209147])
+
+
+all 3 tests passed
+@@AB_END 1 A rc=0@@
+@@AB_BEGIN 1 B@@
+NPU kernel tests -- 3 cases x 31 independently-seeded runs against a precomputed reference, with on-device cycle counts
+
+==> decoder_feedforward
+[decoder_feedforward run0          ] max|Δ|=  0.00488 (   2.25% of expected)  mean|Δ|= 0.000644  within tol=100.00%  -> PASS
+[decoder_feedforward run1          ] max|Δ|=  0.00781 (   1.13% of expected)  mean|Δ|= 0.000918  within tol=100.00%  -> PASS
+[decoder_feedforward run2          ] max|Δ|=  0.00781 (   1.22% of expected)  mean|Δ|= 0.001003  within tol=100.00%  -> PASS
+[decoder_feedforward run3          ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000973  within tol=100.00%  -> PASS
+[decoder_feedforward run4          ] max|Δ|=  0.00781 (   0.75% of expected)  mean|Δ|= 0.000697  within tol=100.00%  -> PASS
+[decoder_feedforward run5          ] max|Δ|=  0.00781 (   1.30% of expected)  mean|Δ|= 0.000734  within tol=100.00%  -> PASS
+[decoder_feedforward run6          ] max|Δ|=  0.00586 (   1.40% of expected)  mean|Δ|= 0.000807  within tol=100.00%  -> PASS
+[decoder_feedforward run7          ] max|Δ|=  0.00781 (   1.14% of expected)  mean|Δ|= 0.000765  within tol=100.00%  -> PASS
+[decoder_feedforward run8          ] max|Δ|=  0.00781 (   1.05% of expected)  mean|Δ|= 0.000734  within tol=100.00%  -> PASS
+[decoder_feedforward run9          ] max|Δ|=  0.00781 (   1.21% of expected)  mean|Δ|= 0.000847  within tol=100.00%  -> PASS
+[decoder_feedforward run10         ] max|Δ|=  0.00586 (   1.88% of expected)  mean|Δ|= 0.000651  within tol=100.00%  -> PASS
+[decoder_feedforward run11         ] max|Δ|=  0.00781 (   0.74% of expected)  mean|Δ|= 0.000783  within tol=100.00%  -> PASS
+[decoder_feedforward run12         ] max|Δ|=  0.00781 (   0.99% of expected)  mean|Δ|= 0.000628  within tol=100.00%  -> PASS
+[decoder_feedforward run13         ] max|Δ|=  0.01172 (   1.69% of expected)  mean|Δ|= 0.000953  within tol=100.00%  -> PASS
+[decoder_feedforward run14         ] max|Δ|=  0.00586 (   1.49% of expected)  mean|Δ|= 0.000596  within tol=100.00%  -> PASS
+[decoder_feedforward run15         ] max|Δ|=  0.00391 (   1.37% of expected)  mean|Δ|= 0.000606  within tol=100.00%  -> PASS
+[decoder_feedforward run16         ] max|Δ|=  0.00781 (   1.35% of expected)  mean|Δ|= 0.000820  within tol=100.00%  -> PASS
+[decoder_feedforward run17         ] max|Δ|=  0.00586 (   1.56% of expected)  mean|Δ|= 0.000647  within tol=100.00%  -> PASS
+[decoder_feedforward run18         ] max|Δ|=  0.01172 (   1.16% of expected)  mean|Δ|= 0.000905  within tol=100.00%  -> PASS
+[decoder_feedforward run19         ] max|Δ|=  0.00781 (   1.16% of expected)  mean|Δ|= 0.000866  within tol=100.00%  -> PASS
+[decoder_feedforward run20         ] max|Δ|=  0.00781 (   1.49% of expected)  mean|Δ|= 0.000666  within tol=100.00%  -> PASS
+[decoder_feedforward run21         ] max|Δ|=  0.00781 (   1.18% of expected)  mean|Δ|= 0.000739  within tol=100.00%  -> PASS
+[decoder_feedforward run22         ] max|Δ|=  0.00781 (   1.16% of expected)  mean|Δ|= 0.000962  within tol=100.00%  -> PASS
+[decoder_feedforward run23         ] max|Δ|=  0.00781 (   0.93% of expected)  mean|Δ|= 0.000809  within tol=100.00%  -> PASS
+[decoder_feedforward run24         ] max|Δ|=  0.00781 (   1.37% of expected)  mean|Δ|= 0.000640  within tol=100.00%  -> PASS
+[decoder_feedforward run25         ] max|Δ|=  0.00781 (   0.69% of expected)  mean|Δ|= 0.000900  within tol=100.00%  -> PASS
+[decoder_feedforward run26         ] max|Δ|=  0.00781 (   0.76% of expected)  mean|Δ|= 0.000897  within tol=100.00%  -> PASS
+[decoder_feedforward run27         ] max|Δ|=  0.00781 (   0.66% of expected)  mean|Δ|= 0.000958  within tol=100.00%  -> PASS
+[decoder_feedforward run28         ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000875  within tol=100.00%  -> PASS
+[decoder_feedforward run29         ] max|Δ|=  0.00781 (   0.77% of expected)  mean|Δ|= 0.000784  within tol=100.00%  -> PASS
+[decoder_feedforward run30         ] max|Δ|=  0.00391 (   1.32% of expected)  mean|Δ|= 0.000452  within tol=100.00%  -> PASS
+    median cycles=203696 min=202508 p25=203039 (of 31 runs: [209416, 202602, 203348, 204463, 204071, 202917, 203039, 203392, 202638, 204348, 203726, 203390, 202508, 204005, 203741, 203913, 202709, 203534, 203696, 205096, 204770, 203799, 203420, 202996, 204496, 204013, 203646, 203741, 204703, 203523, 202754])
+
+
+all 3 tests passed
+@@AB_END 1 B rc=0@@

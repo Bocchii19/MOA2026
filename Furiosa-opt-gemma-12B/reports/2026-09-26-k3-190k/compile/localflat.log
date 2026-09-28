@@ -1,0 +1,11 @@
+   Compiling [1/1] ops::decoder_feedforward
+error: furiosa-opt: ops::decoder_feedforward: visa: while lowering StoTrf
+       caused by: configuring the fetch sequencer
+       caused by: Fetch: a live input axis is left unread (Time 1, Packet (L / 240 % 2, L / 16 % 15))
+   --> src/device/shared/mlp.rs:766:10
+    |
+766 |         .to_trf()
+    |          ^^^^^^^^
+
+    Finished 1 compiled, 14 not matching ops::decoder_feedforward
+error: could not compile `furiosa-opt-gemma4` (lib) due to 1 previous error; 224 warnings emitted

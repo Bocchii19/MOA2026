@@ -1,0 +1,13 @@
+diff --git a/src/ops.rs b/src/ops.rs
+index 559bff8..8a9b8e0 100644
+--- a/src/ops.rs
++++ b/src/ops.rs
+@@ -190,6 +190,8 @@ pub fn sliding_attention_output(
+     let rms = sliding::halfnorm::exchange_rms_local(ctx, partial);
+     let rms_vrf = sliding::halfnorm::rms_vrf(ctx, &rms);
+     let out = sliding::halfnorm::half_normalize_add(ctx, &y, &rms_vrf, &weight_vrf, &scale_vrf, &residual_vrf);
++    // Combine the sixteen 240-byte row pieces into one aligned 3,840-byte half per cluster.
++    let out: DmTensor<bf16, Chip, sliding::projection::OutputClusters, m![1 # 256], m![H % 1920]> = out.to_dm(&mut ctx.tdma);
+     out.view().to_hbm_view(&mut ctx.tdma, residual_hbm.view_mut());
+ }
+ 

@@ -1,0 +1,22 @@
+cp: cannot create regular file '/tmp/k3190_A': Read-only file system
+cp: cannot create regular file '/tmp/k3190_B': Read-only file system
+chmod: cannot access '/tmp/k3190_A': No such file or directory
+chmod: cannot access '/tmp/k3190_B': No such file or directory
+@@AB_BEGIN 1 A@@
+./entry.sh: 7: /tmp/k3190_A: not found
+@@AB_END 1 A rc=127@@
+@@AB_BEGIN 1 B@@
+./entry.sh: 11: /tmp/k3190_B: not found
+@@AB_END 1 B rc=127@@
+@@AB_BEGIN 2 A@@
+./entry.sh: 15: /tmp/k3190_A: not found
+@@AB_END 2 A rc=127@@
+@@AB_BEGIN 2 B@@
+./entry.sh: 19: /tmp/k3190_B: not found
+@@AB_END 2 B rc=127@@
+@@AB_BEGIN 3 A@@
+./entry.sh: 23: /tmp/k3190_A: not found
+@@AB_END 3 A rc=127@@
+@@AB_BEGIN 3 B@@
+./entry.sh: 27: /tmp/k3190_B: not found
+@@AB_END 3 B rc=127@@

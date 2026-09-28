@@ -1,0 +1,14 @@
+{
+  "tag": "k3190-cleanup-check",
+  "rounds": 1,
+  "profile": "info",
+  "only": "",
+  "reverse": false,
+  "sha256": {
+    "bin_A": "3e6073ebccf736623459b81e321ef7510380c62f54c5a98edf1db1894c08dc45",
+    "entry.sh": "5749d7c2adf9023e6ea42c70ca3e0d6f73711058318a3adebff25beeaff2a96b",
+    "bin_B": "3e6073ebccf736623459b81e321ef7510380c62f54c5a98edf1db1894c08dc45",
+    "fixtures.safetensors": "3fe8390d54b9e379f9520a1d3a898c7afad41ca6df836a7afcf575eb5c6f7926"
+  },
+  "job_id": 99339
+}

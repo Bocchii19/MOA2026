@@ -1,0 +1,12 @@
+{
+  "job_id": 99221,
+  "valid": false,
+  "errors": [
+    "incomplete/failed invocations"
+  ],
+  "samples": {
+    "A": {},
+    "B": {}
+  },
+  "kernels": {}
+}

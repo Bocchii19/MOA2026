@@ -1,0 +1,13 @@
+{
+  "id": 99339,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-cleanup-check",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:44:26Z",
+  "started_at": "2026-09-25T21:44:28Z",
+  "finished_at": "2026-09-25T21:44:50Z",
+  "duration_sec": 21.435170866,
+  "exit_code": 0,
+  "device_id": null
+}

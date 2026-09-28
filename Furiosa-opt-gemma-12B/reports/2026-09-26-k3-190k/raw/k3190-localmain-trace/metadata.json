@@ -1,0 +1,14 @@
+{
+  "tag": "k3190-localmain-trace",
+  "rounds": 1,
+  "profile": "trace",
+  "only": "decoder_feedforward",
+  "reverse": false,
+  "sha256": {
+    "bin_A": "3e86a6cccabffb175f084a0f4caf7e65bb24c5f30a2badcbdb7575bb4866637b",
+    "entry.sh": "1fb5ec54cb37d8fdc0a0632189448a30e53e0e48f995f7d95de90a12653d7861",
+    "bin_B": "8199805b023ca49a1e326f9e9a088f28a2125f9909c78e91990baab2cc843793",
+    "fixtures.safetensors": "3fe8390d54b9e379f9520a1d3a898c7afad41ca6df836a7afcf575eb5c6f7926"
+  },
+  "job_id": 99270
+}

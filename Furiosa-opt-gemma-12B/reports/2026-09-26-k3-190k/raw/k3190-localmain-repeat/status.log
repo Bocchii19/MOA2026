@@ -1,0 +1,13 @@
+{
+  "id": 99265,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-localmain-repeat",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:28:15Z",
+  "started_at": "2026-09-25T21:28:15Z",
+  "finished_at": "2026-09-25T21:28:47Z",
+  "duration_sec": 31.407565663,
+  "exit_code": 0,
+  "device_id": null
+}

@@ -1,0 +1,13 @@
+{
+  "id": 99284,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-localreduce",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:34:57Z",
+  "started_at": "2026-09-25T21:35:05Z",
+  "finished_at": "2026-09-25T21:35:37Z",
+  "duration_sec": 31.30396534,
+  "exit_code": 0,
+  "device_id": null
+}

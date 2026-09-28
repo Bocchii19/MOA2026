@@ -1,0 +1,13 @@
+{
+  "id": 99348,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-upd1-fullcheck",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:45:34Z",
+  "started_at": "2026-09-25T21:45:34Z",
+  "finished_at": "2026-09-25T21:46:38Z",
+  "duration_sec": 63.811045888,
+  "exit_code": 0,
+  "device_id": null
+}

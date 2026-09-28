@@ -1,0 +1,13 @@
+{
+  "id": 99314,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-combined-v-reduce",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:40:20Z",
+  "started_at": "2026-09-25T21:40:37Z",
+  "finished_at": "2026-09-25T21:41:09Z",
+  "duration_sec": 31.570673588,
+  "exit_code": 0,
+  "device_id": null
+}

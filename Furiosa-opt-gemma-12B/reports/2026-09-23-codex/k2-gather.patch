@@ -1,0 +1,79 @@
+diff --git a/src/device/sliding/halfnorm.rs b/src/device/sliding/halfnorm.rs
+index 616432b..b469781 100644
+--- a/src/device/sliding/halfnorm.rs
++++ b/src/device/sliding/halfnorm.rs
+@@ -132,6 +132,61 @@ pub(crate) fn exchange_rms_local(ctx: &mut Context, partial: RowGroupBlock) -> R
+         .commit()
+ }
+ 
++/// Gather each row-group scalar within its own sixteen-slice ring, then reduce the
++/// fully live cluster. The broadcast repeats each scalar sixteen times, cancelled
++/// by the exact power-of-two divisor. Only two aligned blocks cross HBM.
++pub(crate) fn exchange_rms_compact(ctx: &mut Context, partial: RowGroupBlock) -> RowGroupScalar {
++    type ClusterBlock = DmTensor<f32, Chip, OutputClusters, m![1 # 256], m![Dummy8, 1 # 8]>;
++    // Gather the sixteen aligned scalar blocks locally before exchanging two blocks through HBM.
++    let partial: DmTensor<f32, Chip, OutputClusters, HiddenRows, m![Qs / 64]> = unsafe { partial.reshape() };
++    let all: DmTensor<f32, Chip, OutputClusters, m![1 # 256], m![H % 1920 / 120, Qs / 64]> = partial.to_dm(&mut ctx.tdma);
++    let all: DmTensor<f32, Chip, OutputClusters, m![1 # 256], m![H % 1920 / 120, Dummy8, 1 # 8]> = unsafe { all.reshape() };
++    let mut cluster: ClusterBlock = DmTensor::new();
++    ctx.main
++        .begin(all.view().tile::<m![Dummy8], 1, m![H % 1920 / 120, Dummy8 = 1 # 8, 1 # 8]>(0))
++        .fetch::<m![H % 1920 / 120], m![1 # 8]>()
++        .collect::<m![H % 1920 / 120], m![1 # 8]>()
++        .vector_init()
++        .vector_intra_slice_tag(TagMode::Zero)
++        .vector_narrow_trim::<m![1 # 4]>()
++        .vector_intra_slice_reduce::<H, m![1], m![1 # 4]>(IntraSliceReduceOpF32::Add)
++        .vector_widen_pad::<m![1 # 8]>()
++        .vector_final()
++        .commit_trim::<m![1 # 8]>()
++        .commit_view(cluster.view_mut().tile::<m![Dummy8], 1, m![Dummy8 = 1 #{!} 8, 1 # 8]>(0));
++    let cluster: DmTensor<f32, Chip, OutputClusters, m![1 # 256], m![Qs / 64]> = unsafe { cluster.reshape() };
++    let scratch: HbmTensor<f32, Chip, m![H / 1920, Qs / 64]> = cluster.to_hbm(&mut ctx.tdma);
++    let all: DmTensor<f32, Chip, m![Dummy2], m![Dummy256 / 16, 1 # 16], m![H / 1920, Qs / 64]> = scratch.to_dm(&mut ctx.tdma);
++    // Rename the scratch cluster axis before restoring the destination cluster type:
++    // both partials belong in each destination slice, irrespective of its cluster.
++    let all: DmTensor<f32, Chip, OutputClusters, HiddenRows, m![Dummy2, Dummy8, 1 # 8]> = unsafe { all.reshape() };
++    let sum: RowGroupScalar = ctx.main
++        .begin(all.view().tile::<m![Dummy8], 1, m![Dummy2, Dummy8 = 1 # 8, 1 # 8]>(0))
++        .fetch::<m![Dummy2], m![1 # 8]>()
++        .collect::<m![Dummy2], m![1 # 8]>()
++        .vector_init()
++        .vector_intra_slice_tag(TagMode::Zero)
++        .vector_narrow_trim::<m![1 # 4]>()
++        .vector_intra_slice_reduce::<Dummy2, m![1], m![1 # 4]>(IntraSliceReduceOpF32::Add)
++        .vector_widen_pad::<m![1 # 8]>()
++        .vector_final()
++        .commit_trim::<m![1 # 8]>()
++        .commit();
++    ctx.main
++        .begin(sum.view())
++        .fetch::<m![1], m![1 # 8]>()
++        .collect::<m![1], m![1 # 8]>()
++        .vector_init()
++        .vector_intra_slice_tag(TagMode::Zero)
++        .vector_narrow_trim::<m![1 # 4]>()
++        .vector_fp_binary(FpBinaryOp::AddF, EPS)
++        .vector_fp_unary(FpUnaryOp::Sqrt)
++        .vector_widen_pad::<m![1 # 8]>()
++        .vector_final()
++        .commit_trim::<m![1 # 8]>()
++        .commit()
++}
++
+ /// `rms` already on the row-group slices, into the VRF.
+ pub(crate) fn rms_vrf(ctx: &mut Context, rms: &RowGroupScalar) -> VrfTensor<f32, Chip, OutputClusters, HiddenRows, m![1 # 8]> {
+     ctx.sub
+diff --git a/src/ops.rs b/src/ops.rs
+index 559bff8..fa9ebdd 100644
+--- a/src/ops.rs
++++ b/src/ops.rs
+@@ -187,7 +187,7 @@ pub fn sliding_attention_output(
+     let weight_vrf = sliding::halfnorm::load_rows_vrf(ctx, post_attn_rms_weight);
+ 
+     let partial = sliding::halfnorm::half_sumsq(ctx, &y, &scale_vrf);
+-    let rms = sliding::halfnorm::exchange_rms_local(ctx, partial);
++    let rms = sliding::halfnorm::exchange_rms_compact(ctx, partial);
+     let rms_vrf = sliding::halfnorm::rms_vrf(ctx, &rms);
+     let out = sliding::halfnorm::half_normalize_add(ctx, &y, &rms_vrf, &weight_vrf, &scale_vrf, &residual_vrf);
+     out.view().to_hbm_view(&mut ctx.tdma, residual_hbm.view_mut());

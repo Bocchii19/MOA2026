@@ -1,0 +1,13 @@
+{
+  "id": 99231,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-local12",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:11:59Z",
+  "started_at": "2026-09-25T21:11:59Z",
+  "finished_at": "2026-09-25T21:12:31Z",
+  "duration_sec": 31.492241318,
+  "exit_code": 0,
+  "device_id": null
+}

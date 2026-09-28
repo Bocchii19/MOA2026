@@ -1,0 +1,35 @@
+diff --git a/src/device/sliding/halfnorm.rs b/src/device/sliding/halfnorm.rs
+index 616432b..31b0a68 100644
+--- a/src/device/sliding/halfnorm.rs
++++ b/src/device/sliding/halfnorm.rs
+@@ -125,7 +125,9 @@ pub(crate) fn exchange_rms_local(ctx: &mut Context, partial: RowGroupBlock) -> R
+         .vector_intra_slice_tag(TagMode::Zero)
+         .vector_narrow_trim::<m![1 # 4]>()
+         .vector_fp_binary(FpBinaryOp::AddF, EPS)
+-        .vector_fp_unary(FpUnaryOp::Sqrt)
++        .vector_fp_unary(FpUnaryOp::Log)
++        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), -0.5f32)
++        .vector_fp_unary(FpUnaryOp::Exp)
+         .vector_widen_pad::<m![1 # 8]>()
+         .vector_final()
+         .commit_trim::<m![1 # 8]>()
+@@ -159,7 +161,9 @@ pub(crate) fn exchange_rms_switch(ctx: &mut Context, partial: RowGroupBlock) ->
+         .vector_intra_slice_tag(TagMode::Zero)
+         .vector_narrow_trim::<m![1 # 4]>()
+         .vector_fp_binary(FpBinaryOp::AddF, EPS)
+-        .vector_fp_unary(FpUnaryOp::Sqrt)
++        .vector_fp_unary(FpUnaryOp::Log)
++        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), -0.5f32)
++        .vector_fp_unary(FpUnaryOp::Exp)
+         .vector_widen_pad::<m![1 # 8]>()
+         .vector_final()
+         .commit_trim::<m![1 # 8]>()
+@@ -198,7 +202,7 @@ pub(crate) fn half_normalize_add(
+         .vector_init()
+         .vector_intra_slice_tag(TagMode::Zero)
+         .vector_narrow_split::<m![H / 4 % 30], m![H % 4]>()
+-        .vector_fp_binary(FpBinaryOp::DivF, rms_vrf)
++        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Fma), rms_vrf)
+         .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), weight_vrf)
+         .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul1), scale_vrf)
+         .vector_widen_concat::<m![H / 8 % 15], m![H % 8]>()

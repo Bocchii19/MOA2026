@@ -1,0 +1,79 @@
+{
+  "job_id": 76120,
+  "valid": true,
+  "errors": [],
+  "method": "One Arena allocation; sequential new processes; identical public fixture; no excluded runs. Not equivalent to official seven independently seeded inputs.",
+  "tags": {
+    "A": "CURRENT",
+    "B": "K2_GATHER"
+  },
+  "summary": {
+    "baseline_product_estimate": 3.754e+17,
+    "variants": {
+      "A": {
+        "n": 7,
+        "median_cycles": {
+          "sliding_project_qkv": 94420,
+          "sliding_attention_output": 49063,
+          "decoder_feedforward": 231491
+        },
+        "estimated_score_from_kernel_medians": 7.047699100621209,
+        "median_of_individual_estimated_scores": 7.032809825995534
+      },
+      "B": {
+        "n": 7,
+        "median_cycles": {
+          "sliding_project_qkv": 95915,
+          "sliding_attention_output": 51311,
+          "decoder_feedforward": 235781
+        },
+        "estimated_score_from_kernel_medians": 6.86482521847718,
+        "median_of_individual_estimated_scores": 6.8555642994206085
+      }
+    },
+    "paired": {
+      "sliding_project_qkv": {
+        "b_minus_a_cycles": [
+          74375,
+          6621,
+          -4420,
+          3242,
+          -7214,
+          6032,
+          1714
+        ],
+        "median_b_minus_a_cycles": 3242,
+        "b_wins": 2,
+        "n": 7
+      },
+      "sliding_attention_output": {
+        "b_minus_a_cycles": [
+          1236,
+          -2996,
+          3401,
+          1484,
+          6103,
+          4091,
+          2831
+        ],
+        "median_b_minus_a_cycles": 2831,
+        "b_wins": 1,
+        "n": 7
+      },
+      "decoder_feedforward": {
+        "b_minus_a_cycles": [
+          9044,
+          6344,
+          7492,
+          -2128,
+          -2434,
+          -1464,
+          14858
+        ],
+        "median_b_minus_a_cycles": 6344,
+        "b_wins": 3,
+        "n": 7
+      }
+    }
+  }
+}

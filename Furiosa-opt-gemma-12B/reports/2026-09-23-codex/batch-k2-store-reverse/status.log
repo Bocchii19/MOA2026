@@ -1,0 +1,13 @@
+{
+  "id": 76145,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "gemma4-paired-batch",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-22T20:31:39Z",
+  "started_at": "2026-09-22T20:32:46Z",
+  "finished_at": "2026-09-22T20:33:22Z",
+  "duration_sec": 35.186715992,
+  "exit_code": 0,
+  "device_id": null
+}

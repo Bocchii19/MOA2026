@@ -1,0 +1,280 @@
+@@GEMMA4_BATCH_BEGIN 1 1 A@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=93129
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=46339
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=231179
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 1 0@@
+@@GEMMA4_BATCH_BEGIN 2 1 B@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=92309
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=44940
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=230811
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 2 0@@
+@@GEMMA4_BATCH_BEGIN 3 2 B@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=103897
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=47272
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=234187
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 3 0@@
+@@GEMMA4_BATCH_BEGIN 4 2 A@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=96013
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=50851
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=233305
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 4 0@@
+@@GEMMA4_BATCH_BEGIN 5 3 A@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=112193
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=46319
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=231457
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 5 0@@
+@@GEMMA4_BATCH_BEGIN 6 3 B@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=100901
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=48812
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=232647
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 6 0@@
+@@GEMMA4_BATCH_BEGIN 7 4 B@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=91891
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=46868
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=231419
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 7 0@@
+@@GEMMA4_BATCH_BEGIN 8 4 A@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=91545
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=48669
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=238901
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 8 0@@
+@@GEMMA4_BATCH_BEGIN 9 5 A@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=90169
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=46375
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=225919
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 9 0@@
+@@GEMMA4_BATCH_BEGIN 10 5 B@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=91417
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=52950
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=230559
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 10 0@@
+@@GEMMA4_BATCH_BEGIN 11 6 B@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=94284
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=49338
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=226723
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 11 0@@
+@@GEMMA4_BATCH_BEGIN 12 6 A@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=100153
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=52875
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=232741
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 12 0@@
+@@GEMMA4_BATCH_BEGIN 13 7 A@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=87053
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=49353
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=235853
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 13 0@@
+@@GEMMA4_BATCH_BEGIN 14 7 B@@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=94599
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=44233
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=232885
+
+
+all 3 tests passed
+@@GEMMA4_BATCH_END 14 0@@

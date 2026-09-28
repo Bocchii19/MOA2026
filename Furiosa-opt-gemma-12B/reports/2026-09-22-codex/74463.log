@@ -1,0 +1,19 @@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=91453
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=42420
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=235099
+
+
+all 3 tests passed
+remote_entrypoint.sh: all kernel tests passed

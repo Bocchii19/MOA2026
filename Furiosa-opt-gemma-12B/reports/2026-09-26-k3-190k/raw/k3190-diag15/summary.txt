@@ -1,0 +1,7 @@
+built base: 3 kernels, md5 50ca54b7
+built trial: 3 kernels, md5 0bb0b4bf
+job 99219 (ab-k3190-diag15)
+invocations A=3 B=3  numeric FAIL lines A=0 B=0
+k3190-diag15   A  K1=        0 K2=       0 K3=   208695  score=0.0000  (n=[0, 0, 27])
+k3190-diag15   B  K1=        0 K2=       0 K3=   227196  score=0.0000  (n=[0, 0, 27])
+k3190-diag15   B-A  K1=       +0 K2=      +0 K3=   +18501

@@ -1,0 +1,14 @@
+{
+  "tag": "k3190-localdirect",
+  "rounds": 3,
+  "profile": "info",
+  "only": "decoder_feedforward",
+  "reverse": false,
+  "sha256": {
+    "bin_A": "8199805b023ca49a1e326f9e9a088f28a2125f9909c78e91990baab2cc843793",
+    "entry.sh": "99e4357d32ad93718eb160a5f35c5cf8fdbfc59a7e512f20042561d45f89da71",
+    "bin_B": "c42e642bb82bd6300489c751e8bf74839d65b27c125028f84d1149b7855765a9",
+    "fixtures.safetensors": "3fe8390d54b9e379f9520a1d3a898c7afad41ca6df836a7afcf575eb5c6f7926"
+  },
+  "job_id": 99292
+}

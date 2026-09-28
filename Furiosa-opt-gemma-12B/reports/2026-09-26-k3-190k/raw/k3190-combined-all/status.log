@@ -1,0 +1,13 @@
+{
+  "id": 99310,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-combined-all",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:39:42Z",
+  "started_at": "2026-09-25T21:39:42Z",
+  "finished_at": "2026-09-25T21:40:46Z",
+  "duration_sec": 64.538458358,
+  "exit_code": 0,
+  "device_id": null
+}

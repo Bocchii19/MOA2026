@@ -1,0 +1,13 @@
+{
+  "id": 99294,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-localupd1",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:36:47Z",
+  "started_at": "2026-09-25T21:36:54Z",
+  "finished_at": "2026-09-25T21:37:26Z",
+  "duration_sec": 31.673878125,
+  "exit_code": 0,
+  "device_id": null
+}

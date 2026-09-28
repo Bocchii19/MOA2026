@@ -1,0 +1,79 @@
+{
+  "job_id": 76145,
+  "valid": true,
+  "errors": [],
+  "method": "One Arena allocation; sequential new processes; identical public fixture; no excluded runs. Not equivalent to official seven independently seeded inputs.",
+  "tags": {
+    "A": "K2_STORE",
+    "B": "CURRENT"
+  },
+  "summary": {
+    "baseline_product_estimate": 3.754e+17,
+    "variants": {
+      "A": {
+        "n": 7,
+        "median_cycles": {
+          "sliding_project_qkv": 93129,
+          "sliding_attention_output": 48669,
+          "decoder_feedforward": 232741
+        },
+        "estimated_score_from_kernel_medians": 7.086438187181332,
+        "median_of_individual_estimated_scores": 7.065286048262371
+      },
+      "B": {
+        "n": 7,
+        "median_cycles": {
+          "sliding_project_qkv": 94284,
+          "sliding_attention_output": 47272,
+          "decoder_feedforward": 231419
+        },
+        "estimated_score_from_kernel_medians": 7.139773367492323,
+        "median_of_individual_estimated_scores": 7.08695567189464
+      }
+    },
+    "paired": {
+      "sliding_project_qkv": {
+        "b_minus_a_cycles": [
+          -820,
+          7884,
+          -11292,
+          346,
+          1248,
+          -5869,
+          7546
+        ],
+        "median_b_minus_a_cycles": 346,
+        "b_wins": 3,
+        "n": 7
+      },
+      "sliding_attention_output": {
+        "b_minus_a_cycles": [
+          -1399,
+          -3579,
+          2493,
+          -1801,
+          6575,
+          -3537,
+          -5120
+        ],
+        "median_b_minus_a_cycles": -1801,
+        "b_wins": 5,
+        "n": 7
+      },
+      "decoder_feedforward": {
+        "b_minus_a_cycles": [
+          -368,
+          882,
+          1190,
+          -7482,
+          4640,
+          -6018,
+          -2968
+        ],
+        "median_b_minus_a_cycles": -368,
+        "b_wins": 4,
+        "n": 7
+      }
+    }
+  }
+}

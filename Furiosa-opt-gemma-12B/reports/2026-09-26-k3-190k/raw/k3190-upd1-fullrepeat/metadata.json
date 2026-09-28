@@ -1,0 +1,14 @@
+{
+  "tag": "k3190-upd1-fullrepeat",
+  "rounds": 3,
+  "profile": "info",
+  "only": "",
+  "reverse": true,
+  "sha256": {
+    "bin_A": "3e6073ebccf736623459b81e321ef7510380c62f54c5a98edf1db1894c08dc45",
+    "entry.sh": "cd2adf21b40ab846e2096f6b21ccb6f02674684944097a5f51985f00c68a187d",
+    "bin_B": "c22e26cb290774a76832b17f7be280476c6f85689e14824f6cbfb4f894fbabfb",
+    "fixtures.safetensors": "3fe8390d54b9e379f9520a1d3a898c7afad41ca6df836a7afcf575eb5c6f7926"
+  },
+  "job_id": 99367
+}

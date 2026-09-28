@@ -1,0 +1,15 @@
+Submission:   dd0580b2
+Team:         EDABK Spidey
+Status:       completed
+Stage:        evaluate
+Submitted:    2026-09-22 13:01
+Finished:     2026-09-22 13:08
+
+Cycles:
+  ops::sliding_project_qkv         93249
+  ops::sliding_attention_output    49221
+  ops::decoder_feedforward         227044
+
+Score:        7.1154
+
+Full log:     moa-submitter log dd0580b2

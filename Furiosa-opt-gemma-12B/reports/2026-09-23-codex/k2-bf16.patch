@@ -1,0 +1,51 @@
+diff --git a/src/device/sliding/projection.rs b/src/device/sliding/projection.rs
+index 2f0adc1..6cbc901 100644
+--- a/src/device/sliding/projection.rs
++++ b/src/device/sliding/projection.rs
+@@ -813,3 +813,33 @@ pub(crate) fn project_kv_pair_odd(
+         .commit_trim::<m![Ps % 8 / 2]>()
+         .commit()
+ }
++
++/// K2 bf16 contraction with direct f8-to-bf16 Fetch conversion.
++/// The input is kept in bf16, so no high/low activation split is needed.
++pub(crate) fn project_output_bf16(
++    ctx: &mut Context,
++    x: &DmTensor<bf16, Chip, OutputClusters, HiddenRowsByColumns, m![Qs % 256]>,
++    weight: &HbmTensor<f8e4m3, Chip, m![H, Qs]>,
++) -> DmTensor<bf16, Chip, OutputClusters, HiddenRows, m![H % 120]> {
++    let x_trf: TrfTensor<bf16, Chip, OutputClusters, HiddenRowsByColumns, m![1], m![Qs % 256]> = ctx.sub
++        .begin(x.view())
++        .fetch::<m![Qs / 16 % 16], m![Qs % 16]>()
++        .collect::<m![Qs / 16 % 16], m![Qs % 16]>()
++        .to_trf();
++    let w: DmTensor<f8e4m3, Chip, OutputClusters, HiddenRowsByColumns, m![H % 120, Qs % 256]> = weight.to_dm(&mut ctx.tdma);
++    ctx.main.begin(w.view())
++        .fetch::<m![H % 120, Qs / 32 % 8], m![Qs % 32]>()
++        .fetch_table_lookup::<bf16>()
++        .collect::<m![H % 120, Qs / 16 % 16], m![Qs % 16]>()
++        .contract_outer::<m![H % 120, Qs / 32 % 8], m![Qs % 32], _, _, _>(&x_trf)
++        .contract_packet::<m![1]>()
++        .contract_time::<m![H % 120]>()
++        .contract_lane::<m![H % 120], m![1 # 8]>(LaneMode::Interleaved)
++        .vector_init()
++        .vector_inter_slice_reduce::<HiddenRows, m![H % 120]>(InterSliceReduceOpF32::Add)
++        .vector_final()
++        .cast::<bf16, m![1 # 16]>()
++        .transpose::<m![H % 120 / 4], m![H % 4 # 16]>()
++        .commit_trim::<m![H % 4]>()
++        .commit()
++}
+diff --git a/src/ops.rs b/src/ops.rs
+index 559bff8..753cca6 100644
+--- a/src/ops.rs
++++ b/src/ops.rs
+@@ -181,7 +181,7 @@ pub fn sliding_attention_output(
+         unsafe { x.view().reshape::<Chip, m![Qs]>() }.to_dm(&mut ctx.tdma);
+ 
+     let y: DmTensor<bf16, Chip, sliding::projection::OutputClusters, sliding::projection::HiddenRows, m![H % 120]> =
+-        sliding::projection::project_output_unscaled(ctx, &x, o_weight);
++        sliding::projection::project_output_bf16(ctx, &x, o_weight);
+ 
+     let scale_vrf = sliding::halfnorm::load_rows_vrf(ctx, o_weight_scale);
+     let weight_vrf = sliding::halfnorm::load_rows_vrf(ctx, post_attn_rms_weight);

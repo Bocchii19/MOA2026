@@ -1,0 +1,14 @@
+{
+  "tag": "k3190-localmain-repeat",
+  "rounds": 3,
+  "profile": "info",
+  "only": "decoder_feedforward",
+  "reverse": true,
+  "sha256": {
+    "bin_A": "3e86a6cccabffb175f084a0f4caf7e65bb24c5f30a2badcbdb7575bb4866637b",
+    "entry.sh": "2d86a71bc270eaebc4ba660526fdc2acb005ab9dc7155b06c013a4aba12d5819",
+    "bin_B": "8199805b023ca49a1e326f9e9a088f28a2125f9909c78e91990baab2cc843793",
+    "fixtures.safetensors": "3fe8390d54b9e379f9520a1d3a898c7afad41ca6df836a7afcf575eb5c6f7926"
+  },
+  "job_id": 99265
+}

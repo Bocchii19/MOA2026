@@ -1,0 +1,48 @@
+diff --git a/src/ops.rs b/src/ops.rs
+index 559bff8..950c915 100644
+--- a/src/ops.rs
++++ b/src/ops.rs
+@@ -347,35 +347,19 @@ pub fn decoder_feedforward(
+         .collect::<m![H / 8 % 60], m![H % 8]>()
+         .to_vrf();
+ 
+-    // `s' = (a + b) / G_SCALE` per lane: both halves in one stream (six-value packets: three rows'
+-    // lane pairs), the half index innermost in time, summed by the intra-slice reducer, written
+-    // in H order with the lane pair kept (24-byte packets).
+-    let sl: DmTensor<f32, Chip, shared::mlp13::FfClusters, Chunks, m![H / 15 % 32, H % 15 / 3, H % 15 % 3, Dummy2]> = ctx
+-        .main
+-        .begin(both.view())
+-        .fetch::<m![H / 15 % 32, H % 15 / 3, Gs], m![H % 15 % 3 # 4, Dummy2]>()
+-        .collect::<m![H / 15 % 32, H % 15 / 3, Gs], m![H % 15 % 3 # 4, Dummy2]>()
+-        .vector_init()
+-        .vector_intra_slice_tag(TagMode::Zero)
+-        .vector_narrow_split::<m![H / 15 % 32, H % 15 / 3, Gs, H % 15 % 3 # 4 / 2], m![H % 15 % 3 # 4 % 2, Dummy2]>()
+-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), 1f32 / shared::mlp13::G_SCALE)
+-        .vector_intra_slice_reduce::<Gs, m![H / 15 % 32, H % 15 / 3, H % 15 % 3 # 4 / 2], m![H % 15 % 3 # 4 % 2, Dummy2]>(IntraSliceReduceOpF32::Add)
+-        .vector_widen_concat::<m![H / 15 % 32, H % 15 / 3], m![H % 15 % 3 # 4, Dummy2]>()
+-        .vector_final()
+-        .commit_trim::<m![H % 15 % 3, Dummy2]>()
+-        .commit();
+-    // `s = hi + lo`: the lane pair summed (the lane digit in time, as `lane_sum!` does), two
+-    // consecutive rows packed into one 8-byte packet by the Transpose Engine, dense in H order.
+-    let sl: DmTensor<f32, Chip, shared::mlp13::FfClusters, Chunks, m![H % 480, Dummy2]> = unsafe { sl.reshape() };
++    // Re-label cluster and column-half digits as a single four-way reduction.
++    // The view keeps the exact physical packet-major order of the scratch read.
++    let both: DmTensorView<'_, f32, Chip, shared::mlp13::FfClusters, Chunks, m![Dummy8 % 4 / 2, H % 15 / 3, H / 15 % 32, H % 15 % 3, Dummy8 % 2]> = unsafe { both.view().reshape() };
+     let s: DmTensor<f32, Chip, shared::mlp13::FfClusters, Chunks, m![H % 480]> = ctx
+         .main
+-        .begin(sl.view())
+-        .fetch::<m![H / 2 % 240, H % 2, Dummy2], m![1 # 8]>()
+-        .collect::<m![H / 2 % 240, H % 2, Dummy2], m![1 # 8]>()
++        .begin(both)
++        .fetch::<m![H / 2 % 240, H % 2, Dummy8 % 4], m![1 # 8]>()
++        .collect::<m![H / 2 % 240, H % 2, Dummy8 % 4], m![1 # 8]>()
+         .vector_init()
+         .vector_intra_slice_tag(TagMode::Zero)
+         .vector_narrow_trim::<m![1 # 4]>()
+-        .vector_intra_slice_reduce::<Dummy2, m![H / 2 % 240, H % 2], m![1 # 4]>(IntraSliceReduceOpF32::Add)
++        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), 1f32 / shared::mlp13::G_SCALE)
++        .vector_intra_slice_reduce::<Dummy8, m![H / 2 % 240, H % 2], m![1 # 4]>(IntraSliceReduceOpF32::Add)
+         .vector_widen_pad::<m![1 # 8]>()
+         .vector_final()
+         .transpose::<m![H / 2 % 240], m![H % 2 # 8]>()

@@ -1,0 +1,14 @@
+{
+  "tag": "k3190-accepted31",
+  "rounds": 1,
+  "profile": "info",
+  "only": "decoder_feedforward",
+  "reverse": false,
+  "sha256": {
+    "bin_A": "08476ba49071d6584c39aa43b088d906b0e2d2cb98eee05ba4c18940df1a4ebd",
+    "entry.sh": "e195ed3ec2e799f7129ee8823f779ab28ae11d89402b7622645c32bbd5fff726",
+    "bin_B": "416831b4ec54ed79e125c9d243946b22420488b13d81d08315ea8600b7ac102d",
+    "fixtures.safetensors": "075b5fb76785077f098ee10641c1dbe224acfdc71b0e66cada4db9f344c3d514"
+  },
+  "job_id": 99341
+}

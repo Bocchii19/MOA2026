@@ -1,0 +1,79 @@
+{
+  "job_id": 76121,
+  "valid": true,
+  "errors": [],
+  "method": "One Arena allocation; sequential new processes; identical public fixture; no excluded runs. Not equivalent to official seven independently seeded inputs.",
+  "tags": {
+    "A": "BASE",
+    "B": "K3_FUSED4"
+  },
+  "summary": {
+    "baseline_product_estimate": 3.754e+17,
+    "variants": {
+      "A": {
+        "n": 7,
+        "median_cycles": {
+          "sliding_project_qkv": 93882,
+          "sliding_attention_output": 47596,
+          "decoder_feedforward": 232615
+        },
+        "estimated_score_from_kernel_medians": 7.121441663049579,
+        "median_of_individual_estimated_scores": 7.144361160930351
+      },
+      "B": {
+        "n": 7,
+        "median_cycles": {
+          "sliding_project_qkv": 94429,
+          "sliding_attention_output": 46468,
+          "decoder_feedforward": 232577
+        },
+        "estimated_score_from_kernel_medians": 7.165107505103879,
+        "median_of_individual_estimated_scores": 7.220773519798716
+      }
+    },
+    "paired": {
+      "sliding_project_qkv": {
+        "b_minus_a_cycles": [
+          -7940,
+          351,
+          1005,
+          -3512,
+          547,
+          -4874,
+          -536
+        ],
+        "median_b_minus_a_cycles": -536,
+        "b_wins": 4,
+        "n": 7
+      },
+      "sliding_attention_output": {
+        "b_minus_a_cycles": [
+          210,
+          3842,
+          -6897,
+          6760,
+          1487,
+          -4570,
+          -1128
+        ],
+        "median_b_minus_a_cycles": 210,
+        "b_wins": 3,
+        "n": 7
+      },
+      "decoder_feedforward": {
+        "b_minus_a_cycles": [
+          2028,
+          5848,
+          -7214,
+          14468,
+          4018,
+          5022,
+          -498
+        ],
+        "median_b_minus_a_cycles": 4018,
+        "b_wins": 2,
+        "n": 7
+      }
+    }
+  }
+}

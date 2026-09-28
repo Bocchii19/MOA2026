@@ -1,0 +1,204 @@
+NPU kernel tests -- 3 cases against a precomputed reference, with on-device cycle counts
+
+==> sliding_project_qkv
+[sliding_project_qkv q             ] max|Δ|=  0.03125 (   1.05% of expected)  mean|Δ|= 0.001011  within tol=100.00%  -> PASS
+[sliding_project_qkv k             ] max|Δ|=  0.01562 (   0.86% of expected)  mean|Δ|= 0.000887  within tol=100.00%  -> PASS
+[sliding_project_qkv v             ] max|Δ|=  0.03125 (   0.80% of expected)  mean|Δ|= 0.001155  within tol=100.00%  -> PASS
+    cycles=89322
+    SPANS n=79
+    SPAN Task                                             begin=        0 end=    89322 dur=   89322
+    SPAN DMA                                              begin=      100 end=     2838 dur=    2738
+    SPAN Renegade::TuExec                                 begin=     2840 end=     3881 dur=    1041
+    SPAN DMA                                              begin=     2846 end=     5602 dur=    2756
+    SPAN Renegade::TuExec                                 begin=     3882 end=     4387 dur=     505
+    SPAN Renegade::TuExec                                 begin=     4388 end=     4759 dur=     371
+    SPAN Renegade::StoVrf                                 begin=     4760 end=     8092 dur=    3332
+    SPAN Renegade::TuExec                                 begin=     8094 end=     8940 dur=     846
+    SPAN DMA                                              begin=     8106 end=     9054 dur=     948
+    SPAN Renegade::TuExec                                 begin=     9647 end=    10613 dur=     966
+    SPAN DMA                                              begin=     9653 end=    11622 dur=    1969
+    SPAN Renegade::TuExec                                 begin=    10614 end=    12917 dur=    2303
+    SPAN DMA                                              begin=    11625 end=    13572 dur=    1947
+    SPAN Renegade::TuExec                                 begin=    12918 end=    13329 dur=     411
+    SPAN Renegade::TuExec                                 begin=    13330 end=    14887 dur=    1557
+    SPAN DMA                                              begin=    13552 end=    14056 dur=     504
+    SPAN DMA                                              begin=    13714 end=    14886 dur=    1172
+    SPAN Core                                             begin=    14058 end=    18667 dur=    4609
+    SPAN Renegade::TuExec                                 begin=    14889 end=    16724 dur=    1835
+    SPAN DMA                                              begin=    16416 end=    16916 dur=     500
+    SPAN DMA                                              begin=    16725 end=    18350 dur=    1625
+    SPAN DMA                                              begin=    18668 end=    20304 dur=    1636
+    SPAN Core                                             begin=    19013 end=    21156 dur=    2143
+    SPAN Renegade::TuExec                                 begin=    20751 end=    22159 dur=    1408
+    SPAN DMA                                              begin=    20757 end=    34812 dur=   14055
+    SPAN Renegade::TuExec                                 begin=    22160 end=    22659 dur=     499
+    SPAN Renegade::TuExec                                 begin=    22166 end=    22613 dur=     447
+    SPAN Renegade::StoVrf                                 begin=    22660 end=    23783 dur=    1123
+    SPAN Renegade::TuExec                                 begin=    23784 end=    24177 dur=     393
+    SPAN Renegade::StoVrf                                 begin=    23790 end=    24135 dur=     345
+    SPAN Renegade::TuExec                                 begin=    24612 end=    25321 dur=     709
+    SPAN Renegade::TuExec                                 begin=    25322 end=    26721 dur=    1399
+    SPAN Renegade::TuExec                                 begin=    25368 end=    25781 dur=     413
+    SPAN Renegade::TuExec                                 begin=    26722 end=    34822 dur=    8100
+    SPAN Renegade::StoTrf                                 begin=    26918 end=    35480 dur=    8562
+    SPAN DMA                                              begin=    34815 end=    48998 dur=   14183
+    SPAN Renegade::TuExec                                 begin=    34823 end=    35179 dur=     356
+    SPAN Renegade::TuExec                                 begin=    35482 end=    35815 dur=     333
+    SPAN Renegade::StoTrf                                 begin=    35816 end=    38368 dur=    2552
+    SPAN DMA                                              begin=    35848 end=    49834 dur=   13986
+    SPAN Renegade::TuExec                                 begin=    49836 end=    51103 dur=    1267
+    SPAN DMA                                              begin=    49844 end=    77346 dur=   27502
+    SPAN Renegade::TuExec                                 begin=    51104 end=    54287 dur=    3183
+    SPAN Renegade::TuExec                                 begin=    51111 end=    51698 dur=     587
+    SPAN Renegade::TuExec                                 begin=    54288 end=    54663 dur=     375
+    SPAN Renegade::TuExec                                 begin=    54664 end=    55681 dur=    1017
+    SPAN Renegade::TuExec                                 begin=    55834 end=    56215 dur=     381
+    SPAN Renegade::TuExec                                 begin=    56216 end=    56627 dur=     411
+    SPAN Renegade::TuExec                                 begin=    56628 end=    57395 dur=     767
+    SPAN Renegade::TuExec                                 begin=    57396 end=    57837 dur=     441
+    SPAN Renegade::TuExec                                 begin=    57838 end=    58605 dur=     767
+    SPAN Renegade::StoVrf                                 begin=    57844 end=    58279 dur=     435
+    SPAN Renegade::TuExec                                 begin=    58606 end=    59016 dur=     410
+    SPAN Renegade::TuExec                                 begin=    59017 end=    59781 dur=     764
+    SPAN Renegade::StoVrf                                 begin=    59023 end=    59773 dur=     750
+    SPAN Renegade::TuExec                                 begin=    59774 end=    60730 dur=     956
+    SPAN Renegade::TuExec                                 begin=    59782 end=    60745 dur=     963
+    SPAN Renegade::TuExec                                 begin=    60731 end=    61185 dur=     454
+    SPAN Renegade::TuExec                                 begin=    60746 end=    61187 dur=     441
+    SPAN Renegade::TuExec                                 begin=    61818 end=    62237 dur=     419
+    SPAN Renegade::TuExec                                 begin=    62238 end=    63135 dur=     897
+    SPAN Renegade::TuExec                                 begin=    63136 end=    63511 dur=     375
+    SPAN Renegade::StoVrf                                 begin=    63512 end=    63948 dur=     436
+    SPAN Renegade::TuExec                                 begin=    77348 end=    80503 dur=    3155
+    SPAN DMA                                              begin=    77652 end=    78991 dur=    1339
+    SPAN Renegade::TuExec                                 begin=    78993 end=    79591 dur=     598
+    SPAN DMA                                              begin=    78999 end=    80684 dur=    1685
+    SPAN Renegade::TuExec                                 begin=    80504 end=    80879 dur=     375
+    SPAN DMA                                              begin=    80510 end=    82164 dur=    1654
+    SPAN Renegade::TuExec                                 begin=    80880 end=    81519 dur=     639
+    SPAN Renegade::TuExec                                 begin=    81520 end=    82287 dur=     767
+    SPAN Renegade::TuExec                                 begin=    82288 end=    82659 dur=     371
+    SPAN Renegade::StoVrf                                 begin=    82660 end=    83096 dur=     436
+    SPAN Renegade::TuExec                                 begin=    83097 end=    83785 dur=     688
+    SPAN Renegade::TuExec                                 begin=    83942 end=    84275 dur=     333
+    SPAN Renegade::TuExec                                 begin=    84434 end=    84853 dur=     419
+    SPAN Renegade::TuExec                                 begin=    84854 end=    85743 dur=     889
+    SPAN DMA                                              begin=    85744 end=    86724 dur=     980
+    SPAN Cluster                                          begin=    86726 end=    89319 dur=    2593
+
+==> sliding_attention_output
+[sliding_attention_output          ] max|Δ|=  0.01562 (   0.71% of expected)  mean|Δ|= 0.000935  within tol=100.00%  -> PASS
+    cycles=48764
+    SPANS n=25
+    SPAN Task                                             begin=        0 end=    48764 dur=   48764
+    SPAN DMA                                              begin=       98 end=     1786 dur=    1688
+    SPAN Renegade::TuExec                                 begin=     1788 end=     2283 dur=     495
+    SPAN DMA                                              begin=     1794 end=    25270 dur=   23476
+    SPAN Renegade::TuExec                                 begin=     3648 end=     4845 dur=    1197
+    SPAN Renegade::TuExec                                 begin=     4846 end=     5529 dur=     683
+    SPAN Renegade::StoTrf                                 begin=     5530 end=     5994 dur=     464
+    SPAN Renegade::TuExec                                 begin=    25272 end=    28715 dur=    3443
+    SPAN DMA                                              begin=    25574 end=    26915 dur=    1341
+    SPAN Renegade::TuExec                                 begin=    26917 end=    27674 dur=     757
+    SPAN DMA                                              begin=    26924 end=    28268 dur=    1344
+    SPAN Renegade::TuExec                                 begin=    28270 end=    29022 dur=     752
+    SPAN Renegade::TuExec                                 begin=    28717 end=    29287 dur=     570
+    SPAN DMA                                              begin=    29288 end=    30288 dur=    1000
+    SPAN DMA                                              begin=    29294 end=    31204 dur=    1910
+    SPAN Cluster                                          begin=    30290 end=    42349 dur=   12059
+    SPAN Cluster                                          begin=    31206 end=    47026 dur=   15820
+    SPAN Renegade::TuExec                                 begin=    31208 end=    42357 dur=   11149
+    SPAN DMA                                              begin=    42350 end=    44842 dur=    2492
+    SPAN Renegade::TuExec                                 begin=    45240 end=    45669 dur=     429
+    SPAN Renegade::TuExec                                 begin=    45670 end=    46049 dur=     379
+    SPAN Renegade::StoVrf                                 begin=    46050 end=    46489 dur=     439
+    SPAN Renegade::TuExec                                 begin=    46490 end=    47025 dur=     535
+    SPAN DMA                                              begin=    47027 end=    48012 dur=     985
+    SPAN Cluster                                          begin=    48014 end=    48761 dur=     747
+
+==> decoder_feedforward
+[decoder_feedforward               ] max|Δ|=  0.00781 (   1.08% of expected)  mean|Δ|= 0.000672  within tol=100.00%  -> PASS
+    cycles=232068
+    SPANS n=78
+    SPAN Task                                             begin=        0 end=   232068 dur=  232068
+    SPAN DMA                                              begin=       98 end=     3300 dur=    3202
+    SPAN Renegade::TuExec                                 begin=     3302 end=     4343 dur=    1041
+    SPAN DMA                                              begin=     3308 end=     5282 dur=    1974
+    SPAN Renegade::TuExec                                 begin=     4344 end=     5739 dur=    1395
+    SPAN Renegade::TuExec                                 begin=     5740 end=     6157 dur=     417
+    SPAN DMA                                              begin=     5746 end=     8494 dur=    2748
+    SPAN Renegade::StoVrf                                 begin=     6158 end=     6503 dur=     345
+    SPAN Renegade::StoTab                                 begin=     7938 end=    13616 dur=    5678
+    SPAN DMA                                              begin=     7996 end=    54198 dur=   46202
+    SPAN Renegade::TuExec                                 begin=    13619 end=    14173 dur=     554
+    SPAN Renegade::TuExec                                 begin=    14174 end=    15139 dur=     965
+    SPAN Renegade::TuExec                                 begin=    15140 end=    17443 dur=    2303
+    SPAN Renegade::TuExec                                 begin=    17444 end=    18771 dur=    1327
+    SPAN Renegade::TuExec                                 begin=    19172 end=    20571 dur=    1399
+    SPAN Renegade::StoTrf                                 begin=    20572 end=    22827 dur=    2255
+    SPAN Renegade::TuExec                                 begin=    54204 end=    75247 dur=   21043
+    SPAN DMA                                              begin=    54211 end=    55411 dur=    1200
+    SPAN DMA                                              begin=    54402 end=   102772 dur=   48370
+    SPAN Renegade::TuExec                                 begin=    75249 end=    76487 dur=    1238
+    SPAN Renegade::StoVrf                                 begin=    76488 end=    76927 dur=     439
+    SPAN DMA                                              begin=    76920 end=   104914 dur=   27994
+    SPAN Renegade::StoTab                                 begin=   104916 end=   110297 dur=    5381
+    SPAN DMA                                              begin=   104970 end=   115686 dur=   10716
+    SPAN Renegade::TuExec                                 begin=   110298 end=   131337 dur=   21039
+    SPAN DMA                                              begin=   110305 end=   125006 dur=   14701
+    SPAN DMA                                              begin=   110468 end=   125882 dur=   15414
+    SPAN DMA                                              begin=   110474 end=   127652 dur=   17178
+    SPAN Renegade::TuExec                                 begin=   131339 end=   132577 dur=    1238
+    SPAN Renegade::TuExec                                 begin=   132024 end=   135955 dur=    3931
+    SPAN DMA                                              begin=   132042 end=   171792 dur=   39750
+    SPAN Renegade::StoTrf                                 begin=   135956 end=   139891 dur=    3935
+    SPAN Renegade::StoVrf                                 begin=   139892 end=   140920 dur=    1028
+    SPAN Renegade::TuExec                                 begin=   140921 end=   144851 dur=    3930
+    SPAN Renegade::TuExec                                 begin=   144852 end=   146881 dur=    2029
+    SPAN Renegade::StoTrf                                 begin=   144860 end=   150130 dur=    5270
+    SPAN Renegade::TuExec                                 begin=   146882 end=   147397 dur=     515
+    SPAN Renegade::TuExec                                 begin=   150131 end=   152165 dur=    2034
+    SPAN Renegade::TuExec                                 begin=   150142 end=   150742 dur=     600
+    SPAN Renegade::StoTab                                 begin=   150744 end=   157137 dur=    6393
+    SPAN Renegade::TuExec                                 begin=   152166 end=   152705 dur=     539
+    SPAN Renegade::TuExec                                 begin=   152706 end=   157185 dur=    4479
+    SPAN Renegade::TuExec                                 begin=   157187 end=   160065 dur=    2878
+    SPAN Renegade::TuExec                                 begin=   160066 end=   162353 dur=    2287
+    SPAN Renegade::TuExec                                 begin=   162754 end=   165113 dur=    2359
+    SPAN Renegade::StoTrf                                 begin=   165114 end=   169289 dur=    4175
+    SPAN Renegade::TuExec                                 begin=   171794 end=   188875 dur=   17081
+    SPAN DMA                                              begin=   171801 end=   182910 dur=   11109
+    SPAN DMA                                              begin=   172349 end=   184346 dur=   11997
+    SPAN DMA                                              begin=   172355 end=   186116 dur=   13761
+    SPAN Renegade::StoTab                                 begin=   186118 end=   192605 dur=    6487
+    SPAN DMA                                              begin=   186172 end=   198499 dur=   12327
+    SPAN Renegade::TuExec                                 begin=   188876 end=   192607 dur=    3731
+    SPAN Renegade::TuExec                                 begin=   192608 end=   193845 dur=    1237
+    SPAN Renegade::StoTrf                                 begin=   193014 end=   196229 dur=    3215
+    SPAN Renegade::StoVrf                                 begin=   196230 end=   196575 dur=     345
+    SPAN Renegade::TuExec                                 begin=   196576 end=   198249 dur=    1673
+    SPAN Renegade::StoTrf                                 begin=   198250 end=   200366 dur=    2116
+    SPAN Renegade::TuExec                                 begin=   198917 end=   204115 dur=    5198
+    SPAN DMA                                              begin=   198924 end=   200871 dur=    1947
+    SPAN Renegade::TuExec                                 begin=   200874 end=   202002 dur=    1128
+    SPAN DMA                                              begin=   200880 end=   202126 dur=    1246
+    SPAN Renegade::TuExec                                 begin=   202128 end=   202454 dur=     326
+    SPAN Renegade::TuExec                                 begin=   204116 end=   204722 dur=     606
+    SPAN Renegade::TuExec                                 begin=   204723 end=   205973 dur=    1250
+    SPAN Renegade::TuExec                                 begin=   205974 end=   207479 dur=    1505
+    SPAN DMA                                              begin=   207080 end=   208136 dur=    1056
+    SPAN Renegade::StoVrf                                 begin=   207480 end=   208297 dur=     817
+    SPAN Cluster                                          begin=   208138 end=   220695 dur=   12557
+    SPAN DMA                                              begin=   220696 end=   222608 dur=    1912
+    SPAN Renegade::TuExec                                 begin=   222610 end=   224261 dur=    1651
+    SPAN Renegade::TuExec                                 begin=   224262 end=   226553 dur=    2291
+    SPAN Renegade::TuExec                                 begin=   226554 end=   227671 dur=    1117
+    SPAN Renegade::TuExec                                 begin=   227672 end=   228051 dur=     379
+    SPAN Renegade::StoVrf                                 begin=   228052 end=   228487 dur=     435
+    SPAN Renegade::TuExec                                 begin=   228488 end=   229467 dur=     979
+    SPAN DMA                                              begin=   229468 end=   230310 dur=     842
+    SPAN Cluster                                          begin=   230312 end=   232065 dur=    1753
+
+
+all 3 tests passed
+remote_entrypoint.sh: all kernel tests passed

@@ -1,0 +1,13 @@
+{
+  "id": 99249,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-upgatepair",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:25:15Z",
+  "started_at": "2026-09-25T21:25:15Z",
+  "finished_at": "2026-09-25T21:25:47Z",
+  "duration_sec": 31.849465852,
+  "exit_code": 0,
+  "device_id": null
+}

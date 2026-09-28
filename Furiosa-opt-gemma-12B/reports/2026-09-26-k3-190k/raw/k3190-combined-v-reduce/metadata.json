@@ -1,0 +1,14 @@
+{
+  "tag": "k3190-combined-v-reduce",
+  "rounds": 3,
+  "profile": "info",
+  "only": "decoder_feedforward",
+  "reverse": true,
+  "sha256": {
+    "bin_A": "3e6073ebccf736623459b81e321ef7510380c62f54c5a98edf1db1894c08dc45",
+    "entry.sh": "2d86a71bc270eaebc4ba660526fdc2acb005ab9dc7155b06c013a4aba12d5819",
+    "bin_B": "c22e26cb290774a76832b17f7be280476c6f85689e14824f6cbfb4f894fbabfb",
+    "fixtures.safetensors": "3fe8390d54b9e379f9520a1d3a898c7afad41ca6df836a7afcf575eb5c6f7926"
+  },
+  "job_id": 99314
+}

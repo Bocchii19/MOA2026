@@ -1,0 +1,123 @@
+[
+  {
+    "tag": "CODEX-control",
+    "job": 74377,
+    "k1": 93915,
+    "k2": 48708,
+    "k3": 231702,
+    "passed": true,
+    "estimated_score": 7.0753,
+    "profile": "trace",
+    "timestamp_local": "2026-09-22 19:30"
+  },
+  {
+    "tag": "CODEX-pairedrope",
+    "job": 74397,
+    "k1": 99584,
+    "k2": 42832,
+    "k3": 225878,
+    "passed": true,
+    "estimated_score": 7.3039,
+    "profile": "trace",
+    "timestamp_local": "2026-09-22 19:37"
+  },
+  {
+    "tag": "CODEX-splitgate",
+    "job": 74399,
+    "k1": 98777,
+    "k2": 59022,
+    "k3": 232518,
+    "passed": true,
+    "estimated_score": 6.5181,
+    "profile": "trace",
+    "timestamp_local": "2026-09-22 19:37"
+  },
+  {
+    "tag": "CODEX-control2",
+    "job": 74421,
+    "k1": 91931,
+    "k2": 45992,
+    "k3": 235346,
+    "passed": true,
+    "estimated_score": 7.2257,
+    "profile": "trace",
+    "timestamp_local": "2026-09-22 19:45"
+  },
+  {
+    "tag": "CODEX-single-read",
+    "job": 74429,
+    "k1": 90171,
+    "k2": 42792,
+    "k3": 228622,
+    "passed": false,
+    "estimated_score": null,
+    "profile": "trace",
+    "timestamp_local": "2026-09-22 19:46"
+  },
+  {
+    "tag": "CODEX-pairedrope2",
+    "job": 74438,
+    "k1": 89322,
+    "k2": 48764,
+    "k3": 232068,
+    "passed": true,
+    "estimated_score": 7.188,
+    "profile": "trace",
+    "timestamp_local": "2026-09-22 19:51"
+  },
+  {
+    "tag": "CODEX-headtables",
+    "job": 74446,
+    "k1": 106536,
+    "k2": 46718,
+    "k3": 238730,
+    "passed": true,
+    "estimated_score": 6.8109,
+    "profile": "trace",
+    "timestamp_local": "2026-09-22 19:53"
+  },
+  {
+    "tag": "CODEX-info-control1",
+    "job": 74453,
+    "k1": 93462,
+    "k2": 47188,
+    "k3": 232279,
+    "passed": true,
+    "estimated_score": 7.156,
+    "profile": "info",
+    "timestamp_local": "2026-09-22 19:56"
+  },
+  {
+    "tag": "CODEX-info-pairedrope1",
+    "job": 74463,
+    "k1": 91453,
+    "k2": 42420,
+    "k3": 235099,
+    "passed": true,
+    "estimated_score": 7.4386,
+    "profile": "info",
+    "timestamp_local": "2026-09-22 20:00"
+  },
+  {
+    "tag": "CODEX-info-control2",
+    "job": 74477,
+    "k1": 112638,
+    "k2": 45136,
+    "k3": 230963,
+    "passed": true,
+    "estimated_score": 6.8378,
+    "profile": "info",
+    "timestamp_local": "2026-09-22 20:03"
+  },
+  {
+    "tag": "CODEX-info-pairedrope2",
+    "job": 74482,
+    "k1": 97315,
+    "k2": 46604,
+    "k3": 234971,
+    "passed": true,
+    "estimated_score": 7.0625,
+    "profile": "info",
+    "timestamp_local": "2026-09-22 20:05"
+  }
+]

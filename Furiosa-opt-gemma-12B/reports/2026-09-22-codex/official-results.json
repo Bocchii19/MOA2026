@@ -1,0 +1,94 @@
+[
+  {
+    "submission": "4912db55",
+    "score": 7.4924,
+    "correctness": "PASS",
+    "runs_per_kernel": 7,
+    "timing_statistic": "median",
+    "kernels": {
+      "sliding_project_qkv": {
+        "median_cycles": 89120,
+        "runs": [
+          96743,
+          82448,
+          89120,
+          88542,
+          84388,
+          91516,
+          92672
+        ]
+      },
+      "sliding_attention_output": {
+        "median_cycles": 43535,
+        "runs": [
+          42345,
+          41765,
+          43535,
+          44067,
+          44679,
+          44793,
+          42603
+        ]
+      },
+      "decoder_feedforward": {
+        "median_cycles": 230049,
+        "runs": [
+          250948,
+          230049,
+          219155,
+          230406,
+          223075,
+          223547,
+          230106
+        ]
+      }
+    },
+    "log": "official-best-at-start.log"
+  },
+  {
+    "submission": "dd0580b2",
+    "score": 7.1154,
+    "correctness": "PASS",
+    "runs_per_kernel": 7,
+    "timing_statistic": "median",
+    "kernels": {
+      "sliding_project_qkv": {
+        "median_cycles": 93249,
+        "runs": [
+          91451,
+          93131,
+          92077,
+          93983,
+          94141,
+          93249,
+          94957
+        ]
+      },
+      "sliding_attention_output": {
+        "median_cycles": 49221,
+        "runs": [
+          47675,
+          50481,
+          51577,
+          53345,
+          46519,
+          47663,
+          49221
+        ]
+      },
+      "decoder_feedforward": {
+        "median_cycles": 227044,
+        "runs": [
+          230705,
+          227044,
+          231233,
+          225017,
+          229812,
+          225041,
+          218675
+        ]
+      }
+    },
+    "log": "official-candidate.log"
+  }
+]

@@ -1,0 +1,582 @@
+warning: constant `INVSQRT2` is never used
+ --> src/device/shared/mlp.rs:8:7
+  |
+8 | const INVSQRT2: f32 = 0.70710678118f32;
+  |       ^^^^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: type alias `UpGateRows` is never used
+  --> src/device/shared/mlp.rs:10:17
+   |
+10 | pub(crate) type UpGateRows = m![L / 60];
+   |                 ^^^^^^^^^^
+
+warning: type alias `UpGateRowsPaired` is never used
+  --> src/device/shared/mlp.rs:11:17
+   |
+11 | pub(crate) type UpGateRowsPaired = m![L / 120, 1 # 2];
+   |                 ^^^^^^^^^^^^^^^^
+
+warning: function `project_up_and_gate` is never used
+  --> src/device/shared/mlp.rs:13:15
+   |
+13 | pub(crate) fn project_up_and_gate(
+   |               ^^^^^^^^^^^^^^^^^^^
+
+warning: function `project_up_or_gate` is never used
+  --> src/device/shared/mlp.rs:36:4
+   |
+36 | fn project_up_or_gate(
+   |    ^^^^^^^^^^^^^^^^^^
+
+warning: constant `UP_GATE_ROWS_PER_CHUNK` is never used
+  --> src/device/shared/mlp.rs:68:7
+   |
+68 | const UP_GATE_ROWS_PER_CHUNK: usize = 12;
+   |       ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: type alias `UpGateChunk` is never used
+  --> src/device/shared/mlp.rs:70:6
+   |
+70 | type UpGateChunk = DmTensor<f4e2m1, Chip, Cluster, UpGateRows, m![L % 60 = 12, H]>;
+   |      ^^^^^^^^^^^
+
+warning: function `load_up_gate_chunk` is never used
+  --> src/device/shared/mlp.rs:72:4
+   |
+72 | fn load_up_gate_chunk(
+   |    ^^^^^^^^^^^^^^^^^^
+
+warning: function `project_up_gate_chunk` is never used
+  --> src/device/shared/mlp.rs:88:4
+   |
+88 | fn project_up_gate_chunk(
+   |    ^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `contract_up_gate_rows` is never used
+   --> src/device/shared/mlp.rs:168:4
+    |
+168 | fn contract_up_gate_rows<Rows: M>(
+    |    ^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `feedforward` is never used
+   --> src/device/shared/mlp.rs:189:15
+    |
+189 | pub(crate) fn feedforward(
+    |               ^^^^^^^^^^^
+
+warning: function `geglu` is never used
+   --> src/device/shared/mlp.rs:250:15
+    |
+250 | pub(crate) fn geglu(
+    |               ^^^^^
+
+warning: type alias `DownRows` is never used
+   --> src/device/shared/mlp.rs:368:17
+    |
+368 | pub(crate) type DownRows = m![H / 120, 1 # 8];
+    |                 ^^^^^^^^
+
+warning: type alias `DownRowsByColumns` is never used
+   --> src/device/shared/mlp.rs:369:17
+    |
+369 | pub(crate) type DownRowsByColumns = m![H / 120, L / 1920];
+    |                 ^^^^^^^^^^^^^^^^^
+
+warning: function `project_down` is never used
+   --> src/device/shared/mlp.rs:371:15
+    |
+371 | pub(crate) fn project_down(
+    |               ^^^^^^^^^^^^
+
+warning: constant `DOWN_ROWS_PER_CHUNK` is never used
+   --> src/device/shared/mlp.rs:418:7
+    |
+418 | const DOWN_ROWS_PER_CHUNK: usize = 12;
+    |       ^^^^^^^^^^^^^^^^^^^
+
+warning: type alias `DownChunk` is never used
+   --> src/device/shared/mlp.rs:420:6
+    |
+420 | type DownChunk = DmTensor<f4e2m1, Chip, Cluster, DownRowsByColumns, m![H % 120 = 12, L % 1920]>;
+    |      ^^^^^^^^^
+
+warning: function `load_down_chunk` is never used
+   --> src/device/shared/mlp.rs:422:4
+    |
+422 | fn load_down_chunk(
+    |    ^^^^^^^^^^^^^^^
+
+warning: function `project_down_chunk` is never used
+   --> src/device/shared/mlp.rs:433:4
+    |
+433 | fn project_down_chunk(
+    |    ^^^^^^^^^^^^^^^^^^
+
+warning: function `project_down_pass` is never used
+   --> src/device/shared/mlp.rs:474:4
+    |
+474 | fn project_down_pass(
+    |    ^^^^^^^^^^^^^^^^^
+
+warning: function `add_chunks` is never used
+  --> src/device/shared/residual.rs:88:15
+   |
+88 | pub(crate) fn add_chunks<C: M, Chunks: M>(
+   |               ^^^^^^^^^^
+
+warning: function `scale_by_layer_gate_chunks` is never used
+   --> src/device/shared/residual.rs:115:15
+    |
+115 | pub(crate) fn scale_by_layer_gate_chunks<C: M, Chunks: M>(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `normalize_to_chunks` is never used
+   --> src/device/shared/rmsnorm.rs:139:15
+    |
+139 | pub(crate) fn normalize_to_chunks<Cluster: M, Slice: M>(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: function `dereplicate_chunks` is never used
+   --> src/device/shared/rmsnorm.rs:168:15
+    |
+168 | pub(crate) fn dereplicate_chunks<Cluster: M>(
+    |               ^^^^^^^^^^^^^^^^^^
+
+warning: function `normalize_replicated_from_chunks` is never used
+   --> src/device/shared/rmsnorm.rs:180:15
+    |
+180 | pub(crate) fn normalize_replicated_from_chunks<Cluster: M, Replicated: M>(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `normalize_to_chunks_from_hbm` is never used
+   --> src/device/shared/rmsnorm.rs:249:15
+    |
+249 | pub(crate) fn normalize_to_chunks_from_hbm<Cluster: M>(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `normalize_scale_add_chunks_from_hbm` is never used
+   --> src/device/shared/rmsnorm.rs:268:15
+    |
+268 | pub(crate) fn normalize_scale_add_chunks_from_hbm<Cluster: M>(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `split_h` is never used
+  --> src/device/shared/f8split.rs:77:15
+   |
+77 | split_halves!(split_h, [H], H);
+   |               ^^^^^^^
+   |
+   = note: this warning originates in the macro `split_halves` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `split_l3840` is never used
+  --> src/device/shared/f8split.rs:78:15
+   |
+78 | split_halves!(split_l3840, [L % 3840], L);
+   |               ^^^^^^^^^^^
+   |
+   = note: this warning originates in the macro `split_halves` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `split_q256` is never used
+  --> src/device/shared/f8split.rs:81:15
+   |
+81 | pub(crate) fn split_q256<C: M, S: M>(
+   |               ^^^^^^^^^^
+
+warning: function `split_scaled_l3840_f32` is never used
+   --> src/device/shared/f8split.rs:212:19
+    |
+212 | split_scaled_f32!(split_scaled_l3840_f32, [L % 3840], L);
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `split_scaled_f32` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `split_scaled_h_anchored` is never used
+   --> src/device/shared/f8split.rs:263:24
+    |
+263 | split_scaled_anchored!(split_scaled_h_anchored, [H], H);
+    |                        ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `split_scaled_anchored` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `split_scaled_l3840` is never used
+   --> src/device/shared/f8split.rs:265:15
+    |
+265 | split_scaled!(split_scaled_l3840, [L % 3840], L);
+    |               ^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `split_scaled` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `split_scaled_l7680` is never used
+   --> src/device/shared/f8split.rs:266:15
+    |
+266 | split_scaled!(split_scaled_l7680, [L % 7680], L);
+    |               ^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `split_scaled` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: type alias `DownChunkB` is never used
+   --> src/device/shared/mlp13.rs:287:6
+    |
+287 | type DownChunkB = DmTensor<f4e2m1, Chip, FfClusters, DownRows, m![H % 15 = 4, L % 7680]>;
+    |      ^^^^^^^^^^
+
+warning: type alias `DownPartsB` is never used
+   --> src/device/shared/mlp13.rs:292:6
+    |
+292 | type DownPartsB = DmTensor<bf16, Chip, FfClusters, DownRows, m![H % 15 = 4, L % 7680 / 64, L % 7680 / 16 % 4]>;
+    |      ^^^^^^^^^^
+
+warning: type alias `DownFlatB` is never used
+   --> src/device/shared/mlp13.rs:296:6
+    |
+296 | type DownFlatB = DmTensor<bf16, Chip, FfClusters, DownRows, m![H % 15 = 4, Dummy2, L % 3840 / 16]>;
+    |      ^^^^^^^^^
+
+warning: type alias `DownScaleTrfB` is never used
+   --> src/device/shared/mlp13.rs:302:6
+    |
+302 | type DownScaleTrfB = TrfTensor<bf16, Chip, FfClusters, DownRows, m![1], m![H % 15 = 4, Dummy2, L % 3840 / 16]>;
+    |      ^^^^^^^^^^^^^
+
+warning: function `load_down_b` is never used
+   --> src/device/shared/mlp13.rs:324:4
+    |
+324 | fn load_down_b(ctx: &mut Context, w: &HbmTensor<f4e2m1, Chip, m![H, L]>) -> DownChunkB {
+    |    ^^^^^^^^^^^
+
+warning: function `down_rows_b` is never used
+   --> src/device/shared/mlp13.rs:365:21
+    |
+365 | contract_rows_bf16!(down_rows_b, DownChunkB, DownPartsB, [H % 15 = 4]);
+    |                     ^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `contract_rows_bf16` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `down_scale_trf_b` is never used
+   --> src/device/shared/mlp13.rs:398:17
+    |
+398 | down_scale_trf!(down_scale_trf_b, DownScaleTrfB, 4);
+    |                 ^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `down_scale_trf` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `down_scale_contract_b` is never used
+   --> src/device/shared/mlp13.rs:439:22
+    |
+439 | down_scale_contract!(down_scale_contract_b, DownFlatB, DownScaleTrfB, 4);
+    |                      ^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `down_scale_contract` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `exchange_rms_switch` is never used
+   --> src/device/sliding/halfnorm.rs:147:15
+    |
+147 | pub(crate) fn exchange_rms_switch(ctx: &mut Context, partial: RowGroupBlock) -> DmTensor<f32, Chip, OutputClusters, m![1 # 256], m!...
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: function `broadcast_rms_vrf` is never used
+   --> src/device/sliding/halfnorm.rs:172:15
+    |
+172 | pub(crate) fn broadcast_rms_vrf(
+    |               ^^^^^^^^^^^^^^^^^
+
+warning: type alias `QueryRows` is never used
+  --> src/device/sliding/projection.rs:14:17
+   |
+14 | pub(crate) type QueryRows = m![Qs % 2048 / 8];
+   |                 ^^^^^^^^^
+
+warning: type alias `KvRows` is never used
+  --> src/device/sliding/projection.rs:17:17
+   |
+17 | pub(crate) type KvRows = m![Ps % 1024 / 4];
+   |                 ^^^^^^
+
+warning: type alias `QueryWeight` is never used
+  --> src/device/sliding/projection.rs:19:17
+   |
+19 | pub(crate) type QueryWeight = DmTensor<f8e4m3, Chip, QueryClusters, QueryRows, m![Qs % 8, H]>;
+   |                 ^^^^^^^^^^^
+
+warning: type alias `KvWeight` is never used
+  --> src/device/sliding/projection.rs:20:17
+   |
+20 | pub(crate) type KvWeight = DmTensor<f8e4m3, Chip, KvClusters, KvRows, m![Ps % 4, H]>;
+   |                 ^^^^^^^^
+
+warning: function `load_query_weight` is never used
+  --> src/device/sliding/projection.rs:24:15
+   |
+24 | pub(crate) fn load_query_weight(ctx: &mut Context, weight: &HbmTensor<f8e4m3, Chip, m![Qs, H]>) -> QueryWeight {
+   |               ^^^^^^^^^^^^^^^^^
+
+warning: function `load_kv_weight` is never used
+  --> src/device/sliding/projection.rs:30:15
+   |
+30 | pub(crate) fn load_kv_weight(ctx: &mut Context, weight: &HbmTensor<f8e4m3, Chip, m![Ps, H]>) -> KvWeight {
+   |               ^^^^^^^^^^^^^^
+
+warning: function `contract_query_rows` is never used
+   --> src/device/sliding/projection.rs:135:19
+    |
+135 | contract_rows_f8!(contract_query_rows, QueryClusters, QueryRows, [Qs % 8], [Qs % 8 / 4], [Qs % 8]);
+    |                   ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `contract_rows_f8` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `contract_query_rows_anchored` is never used
+   --> src/device/sliding/projection.rs:136:28
+    |
+136 | contract_rows_f8_anchored!(contract_query_rows_anchored, QueryClusters, QueryRows, [Qs % 8], [Qs % 8 / 4], [Qs % 8]);
+    |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `contract_rows_f8_anchored` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `contract_kv_rows` is never used
+   --> src/device/sliding/projection.rs:137:19
+    |
+137 | contract_rows_f8!(contract_kv_rows, KvClusters, KvRows, [Ps % 4], [Ps % 4 / 4], [Ps % 4 # 8]);
+    |                   ^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `contract_rows_f8` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `project_query` is never used
+   --> src/device/sliding/projection.rs:139:15
+    |
+139 | pub(crate) fn project_query(
+    |               ^^^^^^^^^^^^^
+
+warning: function `project_query_anchored` is never used
+   --> src/device/sliding/projection.rs:166:15
+    |
+166 | pub(crate) fn project_query_anchored(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: type alias `KvTrf` is never used
+   --> src/device/sliding/projection.rs:192:17
+    |
+192 | pub(crate) type KvTrf = TrfTensor<f8e4m3, Chip, KvClusters, KvRows, m![Dummy2], m![H]>;
+    |                 ^^^^^
+
+warning: function `kv_input_trf` is never used
+   --> src/device/sliding/projection.rs:194:15
+    |
+194 | pub(crate) fn kv_input_trf(ctx: &mut Context, x8: &XLanes<KvClusters, Replicated>) -> KvTrf {
+    |               ^^^^^^^^^^^^
+
+warning: type alias `KvWeightPair` is never used
+   --> src/device/sliding/projection.rs:205:17
+    |
+205 | pub(crate) type KvWeightPair = DmTensor<f8e4m3, Chip, KvClusters, KvRows, m![Gs, Ps % 4, H]>;
+    |                 ^^^^^^^^^^^^
+
+warning: function `load_kv_weight_pair` is never used
+   --> src/device/sliding/projection.rs:207:15
+    |
+207 | pub(crate) fn load_kv_weight_pair(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: function `project_kv_pair` is never used
+   --> src/device/sliding/projection.rs:223:15
+    |
+223 | pub(crate) fn project_kv_pair(
+    |               ^^^^^^^^^^^^^^^
+
+warning: function `project_output` is never used
+   --> src/device/sliding/projection.rs:292:15
+    |
+292 | pub(crate) fn project_output(
+    |               ^^^^^^^^^^^^^^
+
+warning: function `contract_output_96` is never used
+   --> src/device/sliding/projection.rs:356:24
+    |
+356 | contract_output_piece!(contract_output_96, 96, 24);
+    |                        ^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `contract_output_piece` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `contract_output_24` is never used
+   --> src/device/sliding/projection.rs:357:24
+    |
+357 | contract_output_piece!(contract_output_24, 24, 6);
+    |                        ^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `contract_output_piece` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `apply_output_channel_scale` is never used
+   --> src/device/sliding/projection.rs:360:4
+    |
+360 | fn apply_output_channel_scale(
+    |    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `project_output_unscaled` is never used
+   --> src/device/sliding/projection.rs:500:15
+    |
+500 | pub(crate) fn project_output_unscaled(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `contract_output_rows_96` is never used
+   --> src/device/sliding/projection.rs:570:29
+    |
+570 | contract_output_rows_fused!(contract_output_rows_96, 96, 24);
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `contract_output_rows_fused` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `contract_output_rows_24` is never used
+   --> src/device/sliding/projection.rs:571:29
+    |
+571 | contract_output_rows_fused!(contract_output_rows_24, 24, 6);
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: this warning originates in the macro `contract_output_rows_fused` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: function `project_output_unscaled_2piece` is never used
+   --> src/device/sliding/projection.rs:575:15
+    |
+575 | pub(crate) fn project_output_unscaled_2piece(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: constant `DS_F32` is never used
+ --> src/device/sliding/rmsnorm.rs:8:7
+  |
+8 | const DS_F32: f32 = Ds::SIZE as f32;
+  |       ^^^^^^
+
+warning: function `normalize_query` is never used
+  --> src/device/sliding/rmsnorm.rs:10:15
+   |
+10 | pub(crate) fn normalize_query<Cluster: M, Slice: M>(
+   |               ^^^^^^^^^^^^^^^
+
+warning: function `load_norm_weight` is never used
+  --> src/device/sliding/rmsnorm.rs:75:4
+   |
+75 | fn load_norm_weight<Cluster: M, Slice: M>(
+   |    ^^^^^^^^^^^^^^^^
+
+warning: function `root_mean_square` is never used
+  --> src/device/sliding/rmsnorm.rs:89:4
+   |
+89 | fn root_mean_square<Cluster: M, Slice: M>(
+   |    ^^^^^^^^^^^^^^^^
+
+warning: function `scale_by_rms_and_weight` is never used
+   --> src/device/sliding/rmsnorm.rs:134:4
+    |
+134 | fn scale_by_rms_and_weight<Cluster: M, Slice: M>(
+    |    ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `scale_by_rms` is never used
+   --> src/device/sliding/rmsnorm.rs:157:4
+    |
+157 | fn scale_by_rms<Cluster: M, Slice: M>(
+    |    ^^^^^^^^^^^^
+
+warning: function `normalize_key` is never used
+   --> src/device/sliding/rmsnorm.rs:178:15
+    |
+178 | pub(crate) fn normalize_key(
+    |               ^^^^^^^^^^^^^
+
+warning: function `normalize_value` is never used
+   --> src/device/sliding/rmsnorm.rs:189:15
+    |
+189 | pub(crate) fn normalize_value(
+    |               ^^^^^^^^^^^^^^^
+
+warning: type alias `KvHeadsAcrossSlices` is never used
+ --> src/device/sliding/rope.rs:8:6
+  |
+8 | type KvHeadsAcrossSlices = m![1 # 32, Ns];
+  |      ^^^^^^^^^^^^^^^^^^^
+
+warning: function `apply_rope` is never used
+  --> src/device/sliding/rope.rs:10:15
+   |
+10 | pub(crate) fn apply_rope(
+   |               ^^^^^^^^^^
+
+warning: function `gather_q` is never used
+  --> src/device/sliding/tail.rs:23:15
+   |
+23 | pub(crate) fn gather_q(
+   |               ^^^^^^^^
+
+warning: function `gather_kv_pair` is never used
+  --> src/device/sliding/tail.rs:40:15
+   |
+40 | pub(crate) fn gather_kv_pair(
+   |               ^^^^^^^^^^^^^^
+
+warning: function `rms` is never used
+  --> src/device/sliding/tail.rs:71:4
+   |
+71 | fn rms<S: M>(
+   |    ^^^
+
+warning: function `normalize_weighted` is never used
+   --> src/device/sliding/tail.rs:127:15
+    |
+127 | pub(crate) fn normalize_weighted<S: M>(
+    |               ^^^^^^^^^^^^^^^^^^
+
+warning: function `normalize_plain` is never used
+   --> src/device/sliding/tail.rs:151:15
+    |
+151 | pub(crate) fn normalize_plain<S: M>(
+    |               ^^^^^^^^^^^^^^^
+
+warning: function `park_rope_tables` is never used
+   --> src/device/sliding/tail.rs:174:15
+    |
+174 | pub(crate) fn park_rope_tables(
+    |               ^^^^^^^^^^^^^^^^
+
+warning: function `rope_tables_from_hbm` is never used
+   --> src/device/sliding/tail.rs:190:15
+    |
+190 | pub(crate) fn rope_tables_from_hbm<S: M>(
+    |               ^^^^^^^^^^^^^^^^^^^^
+
+warning: function `gather_rope_tables` is never used
+   --> src/device/sliding/tail.rs:246:15
+    |
+246 | pub(crate) fn gather_rope_tables(
+    |               ^^^^^^^^^^^^^^^^^^
+
+warning: function `reload_rope_tables_one` is never used
+   --> src/device/sliding/tail.rs:302:15
+    |
+302 | pub(crate) fn reload_rope_tables_one(ctx: &mut Context, q_out: &HbmTensor<bf16, Chip, m![Ns, Gs, Ds]>) -> (TableRep, TableRep) {
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `kv_anchor` is never used
+   --> src/device/sliding/tail.rs:313:15
+    |
+313 | pub(crate) fn kv_anchor(
+    |               ^^^^^^^^^
+
+warning: function `reload_rope_tables` is never used
+   --> src/device/sliding/tail.rs:343:15
+    |
+343 | pub(crate) fn reload_rope_tables(ctx: &mut Context, q_out: &HbmTensor<bf16, Chip, m![Ns, Gs, Ds]>) -> (TableRep, TableRep) {
+    |               ^^^^^^^^^^^^^^^^^^
+
+warning: function `table_anchor` is never used
+   --> src/device/sliding/tail.rs:352:15
+    |
+352 | pub(crate) fn table_anchor(
+    |               ^^^^^^^^^^^^
+
+warning: function `kv_anchor_odd` is never used
+   --> src/device/sliding/tail.rs:570:15
+    |
+570 | pub(crate) fn kv_anchor_odd(
+    |               ^^^^^^^^^^^^^
+
+   Compiling [1/1] ops::sliding_attention_output
+    Finished 1 compiled, 14 not matching sliding_attention_output

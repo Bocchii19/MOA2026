@@ -1,0 +1,14 @@
+{
+  "tag": "k3190-local12",
+  "rounds": 3,
+  "profile": "info",
+  "only": "decoder_feedforward",
+  "reverse": false,
+  "sha256": {
+    "bin_A": "3e86a6cccabffb175f084a0f4caf7e65bb24c5f30a2badcbdb7575bb4866637b",
+    "entry.sh": "99e4357d32ad93718eb160a5f35c5cf8fdbfc59a7e512f20042561d45f89da71",
+    "bin_B": "1a6d0acebb02cd73e320934cf67d51e4a6311d27417e35bfd8f4853614da284d",
+    "fixtures.safetensors": "3fe8390d54b9e379f9520a1d3a898c7afad41ca6df836a7afcf575eb5c6f7926"
+  },
+  "job_id": 99231
+}

@@ -1,0 +1,7 @@
+/target
+target
+*.bin
+/out
+__pycache__/
+scripts/opt/.trace*
+ref/furiosa-opt-book/

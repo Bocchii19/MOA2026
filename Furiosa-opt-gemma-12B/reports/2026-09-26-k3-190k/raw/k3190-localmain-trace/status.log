@@ -1,0 +1,13 @@
+{
+  "id": 99270,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-localmain-trace",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:28:59Z",
+  "started_at": "2026-09-25T21:29:19Z",
+  "finished_at": "2026-09-25T21:29:29Z",
+  "duration_sec": 10.539735738,
+  "exit_code": 0,
+  "device_id": null
+}

@@ -1,0 +1,13 @@
+{
+  "id": 99329,
+  "owner": "ktdinh04",
+  "mine": true,
+  "name": "k3190-accepted-all",
+  "status": "SUCCEEDED",
+  "created_at": "2026-09-25T21:42:09Z",
+  "started_at": "2026-09-25T21:42:13Z",
+  "finished_at": "2026-09-25T21:43:18Z",
+  "duration_sec": 64.584281075,
+  "exit_code": 0,
+  "device_id": null
+}

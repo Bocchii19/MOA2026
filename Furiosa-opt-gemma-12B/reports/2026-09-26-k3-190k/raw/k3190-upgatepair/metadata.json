@@ -1,0 +1,14 @@
+{
+  "tag": "k3190-upgatepair",
+  "rounds": 3,
+  "profile": "info",
+  "only": "decoder_feedforward",
+  "reverse": false,
+  "sha256": {
+    "bin_A": "3e86a6cccabffb175f084a0f4caf7e65bb24c5f30a2badcbdb7575bb4866637b",
+    "entry.sh": "99e4357d32ad93718eb160a5f35c5cf8fdbfc59a7e512f20042561d45f89da71",
+    "bin_B": "39ae0423e7f3982081847bff616c37b7755a37c3ca70059fde55f7a905b7ac8e",
+    "fixtures.safetensors": "3fe8390d54b9e379f9520a1d3a898c7afad41ca6df836a7afcf575eb5c6f7926"
+  },
+  "job_id": 99249
+}

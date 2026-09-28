@@ -1,0 +1,125 @@
+{
+  "created_at": "2026-09-22T20:31:38.250096+00:00",
+  "state": "succeeded",
+  "job_id": 76145,
+  "tags": {
+    "A": "K2_STORE",
+    "B": "CURRENT"
+  },
+  "files": {
+    "A": {
+      "source": "/tmp/gemma4-k2-store-evidence/store-gather.bin",
+      "staged": "/tmp/gemma4-round2/batch-k2-store-reverse/stage/test_a",
+      "sha256": "1f2c5007d00f686fcee159140767cba170b3a2bf851dd1e7418253acc9451598",
+      "bytes": 5093800
+    },
+    "B": {
+      "source": "/home/hanet/MinhDuc/gm/projects/furiosa-opt-gemma4-12B/target/experiments/codex-20260922/final.bin",
+      "staged": "/tmp/gemma4-round2/batch-k2-store-reverse/stage/test_b",
+      "sha256": "dbdf3da25955e2366c3148e80324e1f36b56680c5450da32de1080bf7a74d8fb",
+      "bytes": 5088104
+    },
+    "fixture": {
+      "source": "/home/hanet/MinhDuc/gm/projects/furiosa-opt-gemma4-12B/ref/fixtures.safetensors",
+      "staged": "/tmp/gemma4-round2/batch-k2-store-reverse/stage/fixtures.safetensors",
+      "sha256": "cb288f25808150d8aa9fbf653bf1e65237e84b2a9b7d6674f6ff33ba07cb4461",
+      "bytes": 67336
+    }
+  },
+  "entrypoint_sha256": "33a53dc93fd13d050dad3cfe6e41ad0c158f57ef9fe026d7af0bef3d97f80054",
+  "run_order": [
+    {
+      "index": 1,
+      "pair": 1,
+      "variant": "A"
+    },
+    {
+      "index": 2,
+      "pair": 1,
+      "variant": "B"
+    },
+    {
+      "index": 3,
+      "pair": 2,
+      "variant": "B"
+    },
+    {
+      "index": 4,
+      "pair": 2,
+      "variant": "A"
+    },
+    {
+      "index": 5,
+      "pair": 3,
+      "variant": "A"
+    },
+    {
+      "index": 6,
+      "pair": 3,
+      "variant": "B"
+    },
+    {
+      "index": 7,
+      "pair": 4,
+      "variant": "B"
+    },
+    {
+      "index": 8,
+      "pair": 4,
+      "variant": "A"
+    },
+    {
+      "index": 9,
+      "pair": 5,
+      "variant": "A"
+    },
+    {
+      "index": 10,
+      "pair": 5,
+      "variant": "B"
+    },
+    {
+      "index": 11,
+      "pair": 6,
+      "variant": "B"
+    },
+    {
+      "index": 12,
+      "pair": 6,
+      "variant": "A"
+    },
+    {
+      "index": 13,
+      "pair": 7,
+      "variant": "A"
+    },
+    {
+      "index": 14,
+      "pair": 7,
+      "variant": "B"
+    }
+  ],
+  "timeout_seconds": 70,
+  "profile": "info",
+  "method": "One Arena allocation; sequential new processes; identical public fixture; no excluded runs. Not equivalent to official seven independently seeded inputs.",
+  "device": "All invocations inherit the same Arena allocation environment; no device override.",
+  "submission_started_at": "2026-09-22T20:31:38.250171+00:00",
+  "submitted_at": "2026-09-22T20:31:39.680307+00:00",
+  "last_observed_at": "2026-09-22T20:33:27.138999+00:00",
+  "arena_status": {
+    "id": 76145,
+    "owner": "ktdinh04",
+    "mine": true,
+    "name": "gemma4-paired-batch",
+    "status": "SUCCEEDED",
+    "created_at": "2026-09-22T20:31:39Z",
+    "started_at": "2026-09-22T20:32:46Z",
+    "finished_at": "2026-09-22T20:33:22Z",
+    "duration_sec": 35.186715992,
+    "exit_code": 0,
+    "device_id": null
+  },
+  "observation_state": "complete",
+  "evidence_finished_at": "2026-09-22T20:33:27.422111+00:00",
+  "valid": true
+}

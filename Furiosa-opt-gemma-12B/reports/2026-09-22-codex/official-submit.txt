@@ -1,0 +1,10 @@
+Repository:   /tmp/codex-k1-opt
+Files:        27 (281.1 KiB)
+                src/ops.rs
+                src/device/  (26 files)
+
+Submitted as: EDABK Spidey
+Submission:   dd0580b2
+
+Track it with:  moa-submitter status
+Read the log:   moa-submitter log dd0580b2

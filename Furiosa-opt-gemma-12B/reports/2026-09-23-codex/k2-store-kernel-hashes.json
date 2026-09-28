@@ -1,0 +1,32 @@
+{
+  "sliding_project_qkv": {
+    "control": {
+      "bytes": 140203,
+      "sha256": "74cc144d38bbc5f048cb52d767195b677477ffebe8a725bfbce5d3d68a88470a"
+    },
+    "store": {
+      "bytes": 140203,
+      "sha256": "74cc144d38bbc5f048cb52d767195b677477ffebe8a725bfbce5d3d68a88470a"
+    }
+  },
+  "sliding_attention_output": {
+    "control": {
+      "bytes": 67681,
+      "sha256": "a64200ef002cbfc44ce079e585570cfd1b661f47c92d23e123db6e2f008d2092"
+    },
+    "store": {
+      "bytes": 66804,
+      "sha256": "2c94397eab3888d6c81d23bba971f2d56467b19d23917cbe6999dd8435de45c4"
+    }
+  },
+  "decoder_feedforward": {
+    "control": {
+      "bytes": 174267,
+      "sha256": "fb5f05748e117f5dbb9899a2a5a47707dd42dbcf9fc6eea9c834119de671e0c8"
+    },
+    "store": {
+      "bytes": 174267,
+      "sha256": "fb5f05748e117f5dbb9899a2a5a47707dd42dbcf9fc6eea9c834119de671e0c8"
+    }
+  }
+}

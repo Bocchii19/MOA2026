@@ -1,0 +1,98 @@
+<div class="wrap">
+<header class="top">
+  <div class="toprow">
+    <div>
+      <h1>Furiosa RNGD · phần cứng và dataflow của 3 kernel Stage 1</h1>
+      <p class="sub">Mặt phẳng chip theo tầng, tác dụng từng khối, dataflow toàn hệ thống và dataflow từng kernel
+        (<code>sliding_project_qkv</code>, <code>sliding_attention_output</code>, <code>decoder_feedforward</code>).
+        Nguồn: <code>docs/01–09</code>, <code>docs/data/</code>. Timeline kernel là <b>span đo trên phần cứng</b> (trace job 93413,
+        bản best <code>b162deec</code>), đơn vị <b>cycle device ≈ 2 GHz</b>.</p>
+    </div>
+    <button class="tbtn" id="themebtn" aria-pressed="false">Tối / sáng</button>
+  </div>
+  <div class="chips">
+    <span class="chip">SDK <b>0.8.1</b></span>
+    <span class="chip">team best <b>8,4643×</b></span>
+    <span class="chip">score_9_3 <b>9,1481×</b></span>
+    <span class="chip">QKV <b>78,3K</b></span>
+    <span class="chip">SAO <b>36,7K</b></span>
+    <span class="chip">FFN <b>215,6K</b></span>
+    <span class="chip">HBM đỉnh <b>750 B/cycle</b></span>
+    <span class="chip">stream đo được <b>~616 B/cycle</b></span>
+  </div>
+  <nav class="pages" id="pages"></nav>
+</header>
+
+<!-- ① MẶT PHẲNG CHIP -->
+<section class="tab" id="t-chip">
+  <h2>Mặt phẳng chip, chia theo tầng</h2>
+  <p class="note">Bấm vào một khối để xem tác dụng, số liệu và điều cần nhớ khi tối ưu. Kích thước khối không theo tỉ lệ thật.
+    Stage 1 dùng <b>1 chip = 2 cluster</b> chạy cùng một chương trình (SPMD).</p>
+  <div class="legend" id="lg-chip"></div>
+  <div class="layout">
+    <div class="chart"><svg id="chipsvg" viewBox="0 0 1500 1200"></svg></div>
+    <aside id="panel-chip" class="closed"><p class="empty">Chưa chọn khối nào.</p></aside>
+  </div>
+  <h2>Phân cấp bộ nhớ: dung lượng và băng thông</h2>
+  <div class="tw"><table id="memtab"></table></div>
+  <div class="two">
+    <div><h2>Ánh xạ địa chỉ HBM (quyết định tốc độ stream)</h2><div class="tw"><table id="addrtab"></table></div></div>
+    <div><h2>Clock và đơn vị cycle</h2><div class="tw"><table id="clocktab"></table></div>
+      <h2>Byte bắt buộc của 3 kernel</h2><div class="tw"><table id="bytetab"></table></div></div>
+  </div>
+</section>
+
+<!-- ② TÁC DỤNG TỪNG KHỐI -->
+<section class="tab" id="t-blocks">
+  <h2>Tác dụng của từng khối</h2>
+  <p class="note">Mỗi thẻ: khối làm gì, có bao nhiêu, và điều làm nó thành điểm nghẽn hay đòn bẩy. Viền thẻ theo màu tầng.</p>
+  <div id="blockcards"></div>
+  <h2>Bốn context thực thi</h2>
+  <div class="tw"><table id="ctxtab"></table></div>
+</section>
+
+<!-- ③ DATAFLOW HỆ THỐNG -->
+<section class="tab" id="t-sys">
+  <h2>A. Đường đi của dữ liệu trong một kernel</h2>
+  <p class="note">Mọi kernel đều đi theo cùng một đường: weight và activation từ HBM qua DMA vào DM, Tensor Unit đọc DM, tính, ghi lại DM, DMA đẩy kết quả về HBM.
+    Số dưới mũi tên là tốc độ đo được. Bấm khối để xem chi tiết.</p>
+  <div class="legend" id="lg-sys"></div>
+  <div class="layout">
+    <div class="chart"><svg id="syssvg" viewBox="0 0 1500 520"></svg></div>
+    <aside id="panel-sys" class="closed"><p class="empty">Chưa chọn khối nào.</p></aside>
+  </div>
+
+  <h2>B. Ba kernel trong một lớp decoder</h2>
+  <p class="note">Ba kernel được chấm nối tiếp nhau trên cùng activation <code>x</code> (bf16, 3.840 phần tử). Byte bắt buộc là số byte weight + scale phải đọc từ HBM,
+    cố định theo định dạng đề bài.</p>
+  <div class="chart"><svg id="chainsvg" viewBox="0 0 1500 350"></svg></div>
+
+  <h2>C. Chương trình chạy thế nào: luồng lệnh tuần tự</h2>
+  <p class="note">Chương trình compiler phát ra là một dòng lệnh tuần tự đan xen DMA, Tensor Unit, <code>Wait</code> và Sync. Đây là nguồn gốc của head, khe và tail.</p>
+  <div class="chart"><svg id="execsvg" viewBox="0 0 1500 420"></svg></div>
+  <div class="formula">T_kernel ≈ head                 (DMA nhỏ + Wait + setup + [ClusterSync nếu rơi vào đầu])
+         + Σ stream weight         (~ byte / 600–630 B/cycle cả chip)
+         + Σ khe giữa weight       (DMA nhỏ ~0,8–1,8K mỗi lệnh, xếp nối tiếp + Wait/TU xen giữa)
+         + tail                    (compute sau byte weight cuối + chuyển xuyên cluster + sync + store)
+         + lệch cluster            (một phần)</div>
+  <div class="tw"><table id="stream-ops"></table></div>
+
+  <h2>D. Hai cluster chạy cùng chương trình, đồng bộ bằng sync</h2>
+  <div class="chart"><svg id="clsvg" viewBox="0 0 1500 400"></svg></div>
+  <div class="two">
+    <div><h3>Nguồn sinh sync</h3><div class="tw"><table id="synctab"></table></div></div>
+    <div><h3>Cân tải giữa hai cluster (trace 93413)</h3><div class="tw"><table id="balancetab"></table></div></div>
+  </div>
+
+  <h2>E. Head, weight, khe và tail của ba kernel (cluster 0, tỉ lệ thật)</h2>
+  <p class="note">Mỗi thanh cùng thang cycle. Đỏ: head. Cam: stream weight. Tím: khe giữa các weight. Xanh: tail. Rê chuột lên đoạn để đọc số.</p>
+  <div id="sysbars"></div>
+  <h2>F. Lịch tĩnh so với phần cứng</h2>
+  <div class="tw"><table id="statictab"></table></div>
+</section>
+
+<!-- ④⑤⑥ KERNEL -->
+<section class="tab" id="t-qkv"></section>
+<section class="tab" id="t-sao"></section>
+<section class="tab" id="t-ffn"></section>
+</div>
