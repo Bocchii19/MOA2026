@@ -6,10 +6,10 @@ use crate::axes::{C, Ds, Dummy2, Dummy8, E, Gf, Gs, Ns};
 pub(crate) type HeadCluster = m![Ns / 4];
 type Cluster = HeadCluster;
 
-pub(crate) type KvHeadsAcrossSlices = m![1 # 64, Ns % 4];
+pub(crate) type HeadSlices = m![Ns % 4, 1 # 64];
 
 /// The selected cos and sin rows, `[cos, sin]`, on the four head slices of both clusters.
-pub(crate) type RopeRows = DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Dummy2, Ds]>;
+pub(crate) type RopeRows = DmTensor<bf16, Chip, Cluster, HeadSlices, m![Dummy2, Ds]>;
 
 /// RoPE rows computed on chip (step 40). The `cos`/`sin` inputs are the model's standard
 /// theta = 10,000 tables, so the row a position selects is a pure function of that position:
@@ -27,14 +27,14 @@ pub(crate) type RopeRows = DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m!
 /// Transpose pass packs the 256 flits into a dense `[Ds]` vector. The last doubling uses factor 1
 /// because `f` repeats over the two halves. Precision: <= 8 f32 multiplies per value (~5e-7
 /// relative), and the results are rounded to bf16 exactly as the tables are.
-type RopeF32<E> = DmTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, E>;
-const ROPE_R1: f32 = 0.930_572_032_9;
-const ROPE_R2: f32 = 0.865_964_353_1;
-const ROPE_R4: f32 = 0.749_894_201_8;
-const ROPE_R8: f32 = 0.562_341_332_4;
-const ROPE_R16: f32 = 0.316_227_763_9;
-const ROPE_R32: f32 = 0.1;
-const ROPE_R64: f32 = 0.01;
+type RopeF32<E> = DmTensor<f32, Chip, Cluster, HeadSlices, E>;
+const ROPE_RATIO_1: f32 = 0.930_572_032_9;
+const ROPE_RATIO_2: f32 = 0.865_964_353_1;
+const ROPE_RATIO_4: f32 = 0.749_894_201_8;
+const ROPE_RATIO_8: f32 = 0.562_341_332_4;
+const ROPE_RATIO_16: f32 = 0.316_227_763_9;
+const ROPE_RATIO_32: f32 = 0.1;
+const ROPE_RATIO_64: f32 = 0.01;
 /// `rope_offset` is a byte offset (`POS * 256 * 2`); read as a Q24.7 fixed point by
 /// `vector_fxp_to_fp(24)` (value = raw * 2^(24 - 31)) it is `4 * POS`.
 const ROPE_OFFSET_TO_POS: f32 = 0.25;
@@ -83,205 +83,13 @@ rope_ramp_double!(rope_ramp_64, m![C / 2], m![C / 2, 1 # 8], m![Dummy2, C / 2, 1
 rope_ramp_double!(rope_ramp_128, m![C], m![C, 1 # 8], m![Dummy2, C, 1 # 8], m![Dummy2 = 1 #{!} 2, C, 1 # 8], m![Ds / 2, 1 # 8]);
 rope_ramp_double!(rope_ramp_256, m![Ds / 2], m![Ds / 2, 1 # 8], m![Dummy2, Ds / 2, 1 # 8], m![Dummy2 = 1 #{!} 2, Ds / 2, 1 # 8], m![Ds, 1 # 8]);
 
-pub(crate) fn stage_rope_rows(
-    device: &mut Device,
-    rope_offset: &HbmTensor<i32, Chip, m![1]>,
-    _cos: &HbmTensor<bf16, Chip, m![E, Ds]>,
-    _sin: &HbmTensor<bf16, Chip, m![E, Ds]>,
-    after: &DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]>,
-) -> RopeRows {
-    // `0.0 * sum(after)`: a data dependency and nothing else. Hardware issues commands in the
-    // static schedule's order, one context at a time, so the tiny passes below -- which the
-    // scheduler would otherwise place at the very head of the list, where they run 3-12x slower
-    // than modelled -- held back the issue of the K / Q / V weight loads behind them.
-    let zero: RopeF32<m![1 # 8]> = device
-        .main
-        .begin(after.view())
-        .fetch::<m![Ds / 16], m![Ds % 16]>()
-        .fetch_cast::<f32>()
-        .collect::<m![Ds / 8], m![Ds % 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_narrow_split::<m![Ds / 4], m![Ds % 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), 0.0f32)
-        .vector_intra_slice_reduce::<Ds, m![1], m![1 # 4]>(IntraSliceReduceOpF32::Add)
-        .vector_widen_pad::<m![1 # 8]>()
-        .vector_final()
-        .commit_trim::<m![1 # 8]>()
-        .commit();
-    let zero_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![1 # 8]> = device
-        .sub
-        .begin(zero.view())
-        .fetch::<m![1], m![1 # 8]>()
-        .collect::<m![1], m![1 # 8]>()
-        .to_vrf();
-    // POS on every head slice: the one small DMA of this path.
-    let off: DmTensor<i32, Chip, Cluster, KvHeadsAcrossSlices, m![1 # 8]> = rope_offset.to_dm(&mut device.tdma);
-    let pos: RopeF32<m![1 # 8]> = device
-        .main
-        .begin(off.view())
-        .fetch::<m![1], m![1 # 8]>()
-        .collect::<m![1], m![1 # 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_fxp_to_fp(24)
-        .vector_narrow_trim::<m![1 # 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), ROPE_OFFSET_TO_POS)
-        .vector_fp_binary(FpBinaryOp::AddF, &zero_vrf)
-        .vector_widen_pad::<m![1 # 8]>()
-        .vector_final()
-        .commit_trim::<m![1 # 8]>()
-        .commit();
-    let pos_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![1 # 8]> = device
-        .sub
-        .begin(pos.view())
-        .fetch::<m![1], m![1 # 8]>()
-        .collect::<m![1], m![1 # 8]>()
-        .to_vrf();
-    // f(0) = 1, then the geometric ramp by doubling: [1] -> [1, r] -> [1, r, r^2, r^3] -> ...
-    let one: RopeF32<m![1 # 8]> = device
-        .main
-        .begin(pos.view())
-        .fetch::<m![1], m![1 # 8]>()
-        .collect::<m![1], m![1 # 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_narrow_trim::<m![1 # 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), 0.0f32)
-        .vector_fp_binary(FpBinaryOp::AddF, 1.0f32)
-        .vector_widen_pad::<m![1 # 8]>()
-        .vector_final()
-        .commit_trim::<m![1 # 8]>()
-        .commit();
-    let v = rope_ramp_2(device, &one, ROPE_R1);
-    let v = rope_ramp_4(device, &v, ROPE_R2);
-    let v = rope_ramp_8(device, &v, ROPE_R4);
-    let v = rope_ramp_16(device, &v, ROPE_R8);
-    let v = rope_ramp_32(device, &v, ROPE_R16);
-    let v = rope_ramp_64(device, &v, ROPE_R32);
-    let v = rope_ramp_128(device, &v, ROPE_R64);
-    let v = rope_ramp_256(device, &v, 1.0f32);
-    // One value per flit -> dense [Ds]: the Transpose Engine packs two f32 rows per flit.
-    let f: RopeF32<m![Ds]> = device
-        .main
-        .begin(v.view())
-        .fetch::<m![Ds], m![1 # 8]>()
-        .collect::<m![Ds], m![1 # 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_narrow_trim::<m![1 # 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), 1.0f32)
-        .vector_widen_pad::<m![1 # 8]>()
-        .vector_final()
-        .transpose::<m![Ds / 2], m![Ds % 2 # 8]>()
-        .commit_trim::<m![Ds % 2]>()
-        .commit();
-    // angle = POS * f as f32 on every head slice (one pass), then reduced to [-pi, pi]:
-    // turns = round(angle / 2pi) through the Vector Engine's f32 -> i32 conversion (the host model
-    // `float_to_fixedpoint` rounds to nearest; int_width 24 = the same fixed point the POS read uses,
-    // so `turns` holds 128 * n), r = angle - 2pi * n. cos(angle) = cos(r), sin(angle) = sin(r), and
-    // the hardware Sin/Cos never see an argument beyond pi (ban 40_01 fed them up to POS = 137 rad
-    // and q/k came back non-finite).
-    let angle: RopeF32<m![Ds]> = device
-        .main
-        .begin(f.view())
-        .fetch::<m![Ds / 8], m![Ds % 8]>()
-        .collect::<m![Ds / 8], m![Ds % 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_narrow_split::<m![Ds / 4], m![Ds % 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), &pos_vrf)
-        .vector_widen_concat::<m![Ds / 8], m![Ds % 8]>()
-        .vector_final()
-        .commit_trim::<m![Ds % 8]>()
-        .commit();
-    let angle_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
-        .sub
-        .begin(angle.view())
-        .fetch::<m![Ds / 8], m![Ds % 8]>()
-        .collect::<m![Ds / 8], m![Ds % 8]>()
-        .to_vrf();
-    let turns: DmTensor<i32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
-        .main
-        .begin(angle.view())
-        .fetch::<m![Ds / 8], m![Ds % 8]>()
-        .collect::<m![Ds / 8], m![Ds % 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_narrow_split::<m![Ds / 4], m![Ds % 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), ROPE_INV_TWO_PI_Q24)
-        .vector_widen_concat::<m![Ds / 8], m![Ds % 8]>()
-        .vector_fp_to_fxp(ROPE_TURNS_INT_WIDTH)
-        .vector_final()
-        .commit_trim::<m![Ds % 8]>()
-        .commit();
-    // cos(r) over all 256 channels, -sin(r) over the low half, +sin(r) over the high half.
-    let mut rows: RopeRows = DmTensor::new();
-    device.main
-        .begin(turns.view())
-        .fetch::<m![Ds / 8], m![Ds % 8]>()
-        .collect::<m![Ds / 8], m![Ds % 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_fxp_to_fp(ROPE_TURNS_INT_WIDTH)
-        .vector_narrow_split::<m![Ds / 4], m![Ds % 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), ROPE_NEG_TWO_PI_Q24)
-        .vector_fp_binary(FpBinaryOp::AddF, &angle_vrf)
-        .vector_fp_unary(FpUnaryOp::Cos)
-        .vector_widen_concat::<m![Ds / 8], m![Ds % 8]>()
-        .vector_final()
-        .cast::<bf16, m![Ds % 8 # 16]>()
-        .commit_trim::<m![Ds % 8]>()
-        .commit_view(rows.view_mut().tile::<m![Dummy2], 1, m![Dummy2 = 1 #{!} 2, Ds]>(0));
-    // The two sin halves as a macro: a vector-engine immediate must be a literal (an `if`-selected
-    // sign does not const-fold). They land in their own [Ds] tensor through single-level tiles (a
-    // nested Dummy2 x Ds tile write fails verification) and are then copied into `rows`.
-    let mut sin_full: DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = DmTensor::new();
-    macro_rules! sin_half {
-        ($half:literal, $sign:literal) => {
-            let angle_half: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds = 128]> = device
-                .sub
-                .begin(angle.view().tile::<m![Ds], 128, m![Ds = 128 # 256]>(128 * $half))
-                .fetch::<m![1], m![Ds = 128]>()
-                .collect::<m![Ds = 128 / 8], m![Ds = 128 % 8]>()
-                .to_vrf();
-            device.main
-                .begin(turns.view().tile::<m![Ds], 128, m![Ds = 128 # 256]>(128 * $half))
-                .fetch::<m![1], m![Ds = 128]>()
-                .collect::<m![Ds = 128 / 8], m![Ds = 128 % 8]>()
-                .vector_init()
-                .vector_intra_slice_tag(TagMode::Zero)
-                .vector_fxp_to_fp(ROPE_TURNS_INT_WIDTH)
-                .vector_narrow_split::<m![Ds = 128 / 4], m![Ds = 128 % 4]>()
-                .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), ROPE_NEG_TWO_PI_Q24)
-                .vector_fp_binary(FpBinaryOp::AddF, &angle_half)
-                .vector_fp_unary(FpUnaryOp::Sin)
-                .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul1), $sign)
-                .vector_widen_concat::<m![Ds = 128 / 8], m![Ds = 128 % 8]>()
-                .vector_final()
-                .cast::<bf16, m![Ds = 128 % 8 # 16]>()
-                .commit_trim::<m![Ds = 128 % 8]>()
-                .commit_view(sin_full.view_mut().tile::<m![Ds], 128, m![Ds = 128 #{!} 256]>(128 * $half));
-        };
-    }
-    sin_half!(0, -1.0f32);
-    sin_half!(1, 1.0f32);
-    device.main
-        .begin(sin_full.view())
-        .fetch::<m![Ds / 16], m![Ds % 16]>()
-        .collect::<m![Ds / 16], m![Ds % 16]>()
-        .commit_trim::<m![Ds % 16]>()
-        .commit_view(rows.view_mut().tile::<m![Dummy2], 1, m![Dummy2 = 1 #{!} 2, Ds]>(1));
-    rows
-}
-
 /// 1/Ds: summed over the Ds channels of a head it is exactly 1.0.
 const ROPE_ONE_OVER_DS: f32 = 0.00390625;
 
-pub(crate) fn stage_rope_rows_r17(
+pub(crate) fn stage_rope_rows(
     device: &mut Device,
     rope_offset: &HbmTensor<i32, Chip, m![1]>,
-    after: &DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]>,
+    after: &DmTensor<f32, Chip, Cluster, HeadSlices, m![Ds]>,
 ) -> RopeRows {
     // `0.0 * sum(after)`: a data dependency and nothing else. Hardware issues commands in the
     // static schedule's order, one context at a time, so the tiny passes below -- which the
@@ -294,8 +102,7 @@ pub(crate) fn stage_rope_rows_r17(
     let one_k: RopeF32<m![1 # 8]> = device
         .main
         .begin(after.view())
-        .fetch::<m![Ds / 16], m![Ds % 16]>()
-        .fetch_cast::<f32>()
+        .fetch::<m![Ds / 8], m![Ds % 8]>()
         .collect::<m![Ds / 8], m![Ds % 8]>()
         .vector_init()
         .vector_intra_slice_tag(TagMode::Zero)
@@ -307,14 +114,14 @@ pub(crate) fn stage_rope_rows_r17(
         .vector_final()
         .commit_trim::<m![1 # 8]>()
         .commit();
-    let one_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![1 # 8]> = device
+    let one_vrf: VrfTensor<f32, Chip, Cluster, HeadSlices, m![1 # 8]> = device
         .sub
         .begin(one_k.view())
         .fetch::<m![1], m![1 # 8]>()
         .collect::<m![1], m![1 # 8]>()
         .to_vrf();
     // POS on every head slice: the one small DMA of this path, consumed at the head.
-    let off: DmTensor<i32, Chip, Cluster, KvHeadsAcrossSlices, m![1 # 8]> = rope_offset.to_dm(&mut device.tdma);
+    let off: DmTensor<i32, Chip, Cluster, HeadSlices, m![1 # 8]> = rope_offset.to_dm(&mut device.tdma);
     let pos: RopeF32<m![1 # 8]> = device
         .main
         .begin(off.view())
@@ -329,7 +136,7 @@ pub(crate) fn stage_rope_rows_r17(
         .vector_final()
         .commit_trim::<m![1 # 8]>()
         .commit();
-    let pos_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![1 # 8]> = device
+    let pos_vrf: VrfTensor<f32, Chip, Cluster, HeadSlices, m![1 # 8]> = device
         .sub
         .begin(pos.view())
         .fetch::<m![1], m![1 # 8]>()
@@ -350,13 +157,13 @@ pub(crate) fn stage_rope_rows_r17(
         .vector_final()
         .commit_trim::<m![1 # 8]>()
         .commit();
-    let v = rope_ramp_2(device, &one, ROPE_R1);
-    let v = rope_ramp_4(device, &v, ROPE_R2);
-    let v = rope_ramp_8(device, &v, ROPE_R4);
-    let v = rope_ramp_16(device, &v, ROPE_R8);
-    let v = rope_ramp_32(device, &v, ROPE_R16);
-    let v = rope_ramp_64(device, &v, ROPE_R32);
-    let v = rope_ramp_128(device, &v, ROPE_R64);
+    let v = rope_ramp_2(device, &one, ROPE_RATIO_1);
+    let v = rope_ramp_4(device, &v, ROPE_RATIO_2);
+    let v = rope_ramp_8(device, &v, ROPE_RATIO_4);
+    let v = rope_ramp_16(device, &v, ROPE_RATIO_8);
+    let v = rope_ramp_32(device, &v, ROPE_RATIO_16);
+    let v = rope_ramp_64(device, &v, ROPE_RATIO_32);
+    let v = rope_ramp_128(device, &v, ROPE_RATIO_64);
     let v = rope_ramp_256(device, &v, 1.0f32);
     // One value per flit -> dense [Ds]: the Transpose Engine packs two f32 rows per flit.
     let f: RopeF32<m![Ds]> = device
@@ -392,13 +199,13 @@ pub(crate) fn stage_rope_rows_r17(
         .vector_final()
         .commit_trim::<m![Ds % 8]>()
         .commit();
-    let angle_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
+    let angle_vrf: VrfTensor<f32, Chip, Cluster, HeadSlices, m![Ds]> = device
         .sub
         .begin(angle.view())
         .fetch::<m![Ds / 8], m![Ds % 8]>()
         .collect::<m![Ds / 8], m![Ds % 8]>()
         .to_vrf();
-    let turns: DmTensor<i32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
+    let turns: DmTensor<i32, Chip, Cluster, HeadSlices, m![Ds]> = device
         .main
         .begin(angle.view())
         .fetch::<m![Ds / 8], m![Ds % 8]>()
@@ -433,10 +240,10 @@ pub(crate) fn stage_rope_rows_r17(
     // The two sin halves as a macro: a vector-engine immediate must be a literal (an `if`-selected
     // sign does not const-fold). They land in their own [Ds] tensor through single-level tiles (a
     // nested Dummy2 x Ds tile write fails verification) and are then copied into `rows`.
-    let mut sin_full: DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = DmTensor::new();
+    let mut sin_full: DmTensor<bf16, Chip, Cluster, HeadSlices, m![Ds]> = DmTensor::new();
     macro_rules! sin_half {
         ($half:literal, $sign:literal) => {
-            let angle_half: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds = 128]> = device
+            let angle_half: VrfTensor<f32, Chip, Cluster, HeadSlices, m![Ds = 128]> = device
                 .sub
                 .begin(angle.view().tile::<m![Ds], 128, m![Ds = 128 # 256]>(128 * $half))
                 .fetch::<m![1], m![Ds = 128]>()
@@ -475,16 +282,16 @@ pub(crate) fn stage_rope_rows_r17(
 /// `apply_rope` with the sin products computed straight from the two half tiles of q / k (the low
 /// half of the output is the high half of the input times the low half of sin, and vice versa):
 /// two passes per tensor instead of two copy passes plus one product pass.
-pub(crate) fn apply_rope_r21(
+pub(crate) fn apply_rope(
     device: &mut Device,
-    q: &DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]>,
-    k: &DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]>,
+    q: &DmTensor<bf16, Chip, Cluster, HeadSlices, m![Gs, Ds]>,
+    k: &DmTensor<bf16, Chip, Cluster, HeadSlices, m![Ds]>,
     rows: &RopeRows,
 ) -> (
-    DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]>,
-    DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]>,
+    DmTensor<bf16, Chip, Cluster, HeadSlices, m![Gs, Ds]>,
+    DmTensor<bf16, Chip, Cluster, HeadSlices, m![Ds]>,
 ) {
-    let cos_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
+    let cos_vrf: VrfTensor<f32, Chip, Cluster, HeadSlices, m![Ds]> = device
         .sub
         .begin(rows.view().tile::<m![Dummy2], 1, m![Dummy2 = 1 # 2, Ds]>(0))
         .fetch::<m![Ds / 16], m![Ds % 16]>()
@@ -492,14 +299,14 @@ pub(crate) fn apply_rope_r21(
         .collect::<m![Ds / 8], m![Ds % 8]>()
         .to_vrf();
     let sin = rows.view().tile::<m![Dummy2], 1, m![Dummy2 = 1 # 2, Ds]>(1);
-    let sin_lo: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds = 128]> = device
+    let sin_lo: VrfTensor<f32, Chip, Cluster, HeadSlices, m![Ds = 128]> = device
         .sub
         .begin(sin.tile::<m![Ds], 128, m![Dummy2 = 1 # 2, Ds = 128 # 256]>(0))
         .fetch::<m![1], m![Ds = 128]>()
         .fetch_cast::<f32>()
         .collect::<m![Ds = 128 / 8], m![Ds = 128 % 8]>()
         .to_vrf();
-    let sin_hi: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds = 128]> = device
+    let sin_hi: VrfTensor<f32, Chip, Cluster, HeadSlices, m![Ds = 128]> = device
         .sub
         .begin(sin.tile::<m![Ds], 128, m![Dummy2 = 1 # 2, Ds = 128 # 256]>(128))
         .fetch::<m![1], m![Ds = 128]>()
@@ -507,7 +314,7 @@ pub(crate) fn apply_rope_r21(
         .collect::<m![Ds = 128 / 8], m![Ds = 128 % 8]>()
         .to_vrf();
 
-    let mut q_sin: DmTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]> = DmTensor::new();
+    let mut q_sin: DmTensor<f32, Chip, Cluster, HeadSlices, m![Gs, Ds]> = DmTensor::new();
     // q_sin[.., 0..128] = q[.., 128..256] * sin[0..128]
     device.main
         .begin(q.view().tile::<m![Ds], 128, m![Gs, Ds = 128 # 256]>(128))
@@ -536,13 +343,13 @@ pub(crate) fn apply_rope_r21(
         .vector_final()
         .commit_trim::<m![Ds = 128 % 8]>()
         .commit_view(q_sin.view_mut().tile::<m![Ds], 128, m![Gs, Ds = 128 #{!} 256]>(128));
-    let q_sin_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]> = device
+    let q_sin_vrf: VrfTensor<f32, Chip, Cluster, HeadSlices, m![Gs, Ds]> = device
         .sub
         .begin(q_sin.view())
         .fetch::<m![Gs, Ds / 8], m![Ds % 8]>()
         .collect::<m![Gs, Ds / 8], m![Ds % 8]>()
         .to_vrf();
-    let result_q: DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]> = device
+    let result_q: DmTensor<bf16, Chip, Cluster, HeadSlices, m![Gs, Ds]> = device
         .main
         .begin(q.view())
         .fetch::<m![Gs, Ds / 16], m![Ds % 16]>()
@@ -559,7 +366,7 @@ pub(crate) fn apply_rope_r21(
         .commit_trim::<m![Ds % 8]>()
         .commit();
 
-    let mut k_sin: DmTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = DmTensor::new();
+    let mut k_sin: DmTensor<f32, Chip, Cluster, HeadSlices, m![Ds]> = DmTensor::new();
     device.main
         .begin(k.view().tile::<m![Ds], 128, m![Ds = 128 # 256]>(128))
         .fetch::<m![1], m![Ds = 128]>()
@@ -586,175 +393,13 @@ pub(crate) fn apply_rope_r21(
         .vector_final()
         .commit_trim::<m![Ds = 128 % 8]>()
         .commit_view(k_sin.view_mut().tile::<m![Ds], 128, m![Ds = 128 #{!} 256]>(128));
-    let k_sin_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
+    let k_sin_vrf: VrfTensor<f32, Chip, Cluster, HeadSlices, m![Ds]> = device
         .sub
         .begin(k_sin.view())
         .fetch::<m![Ds / 8], m![Ds % 8]>()
         .collect::<m![Ds / 8], m![Ds % 8]>()
         .to_vrf();
-    let result_k: DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
-        .main
-        .begin(k.view())
-        .fetch::<m![Ds / 16], m![Ds % 16]>()
-        .fetch_cast::<f32>()
-        .collect::<m![Ds / 8], m![Ds % 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_narrow_split::<m![Ds / 4], m![Ds % 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), &cos_vrf)
-        .vector_widen_concat::<m![Ds / 8], m![Ds % 8]>()
-        .vector_clip(ClipBinaryOpF32::Add, &k_sin_vrf)
-        .vector_final()
-        .cast::<bf16, m![Ds % 8 # 16]>()
-        .commit_trim::<m![Ds % 8]>()
-        .commit();
-
-    (result_q, result_k)
-}
-
-pub(crate) fn apply_rope(
-    device: &mut Device,
-    q: &DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]>,
-    k: &DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]>,
-    rows: &RopeRows,
-) -> (
-    DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]>,
-    DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]>,
-) {
-    let cos_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
-        .sub
-        .begin(rows.view().tile::<m![Dummy2], 1, m![Dummy2 = 1 # 2, Ds]>(0))
-        .fetch::<m![Ds / 16], m![Ds % 16]>()
-        .fetch_cast::<f32>()
-        .collect::<m![Ds / 8], m![Ds % 8]>()
-        .to_vrf();
-
-    let sin_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
-        .sub
-        .begin(rows.view().tile::<m![Dummy2], 1, m![Dummy2 = 1 # 2, Ds]>(1))
-        .fetch::<m![Ds / 16], m![Ds % 16]>()
-        .fetch_cast::<f32>()
-        .collect::<m![Ds / 8], m![Ds % 8]>()
-        .to_vrf();
-
-    let first_half_q = q.view().tile::<m![Ds], 128, m![Gs, Ds = 128 # 256]>(0);
-    let second_half_q = q.view().tile::<m![Ds], 128, m![Gs, Ds = 128 # 256]>(128);
-
-    let mut rotate_half_q: DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]> =
-        DmTensor::new();
-
-    device.main
-        .begin(first_half_q)
-        .fetch::<m![Gs], m![Ds = 128]>()
-        .collect::<m![Gs, Ds = 128 / 16], m![Ds = 128 % 16]>()
-        .commit_trim::<m![Ds = 128 % 16]>()
-        .commit_view(
-            rotate_half_q
-                .view_mut()
-                .tile::<m![Ds], 128, m![Gs, Ds = 128 #{!} 256]>(128),
-        );
-
-    device.main
-        .begin(second_half_q)
-        .fetch::<m![Gs], m![Ds = 128]>()
-        .collect::<m![Gs, Ds = 128 / 16], m![Ds = 128 % 16]>()
-        .commit_trim::<m![Ds = 128 % 16]>()
-        .commit_view(
-            rotate_half_q
-                .view_mut()
-                .tile::<m![Ds], 128, m![Gs, Ds = 128 #{!} 256]>(0),
-        );
-
-    let first_half_k = k.view().tile::<m![Ds], 128, m![Ds = 128 # 256]>(0);
-    let second_half_k = k.view().tile::<m![Ds], 128, m![Ds = 128 # 256]>(128);
-
-    let mut rotate_half_k: DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> =
-        DmTensor::new();
-
-    device.main
-        .begin(first_half_k)
-        .fetch::<m![1], m![Ds = 128]>()
-        .collect::<m![Ds = 128 / 16], m![Ds = 128 % 16]>()
-        .commit_trim::<m![Ds = 128 % 16]>()
-        .commit_view(
-            rotate_half_k
-                .view_mut()
-                .tile::<m![Ds], 128, m![Ds = 128 #{!} 256]>(128),
-        );
-
-    device.main
-        .begin(second_half_k)
-        .fetch::<m![1], m![Ds = 128]>()
-        .collect::<m![Ds = 128 / 16], m![Ds = 128 % 16]>()
-        .commit_trim::<m![Ds = 128 % 16]>()
-        .commit_view(
-            rotate_half_k
-                .view_mut()
-                .tile::<m![Ds], 128, m![Ds = 128 #{!} 256]>(0),
-        );
-
-    let q_sin: DmTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]> = device
-        .main
-        .begin(rotate_half_q.view())
-        .fetch::<m![Gs, Ds / 16], m![Ds % 16]>()
-        .fetch_cast::<f32>()
-        .collect::<m![Gs, Ds / 8], m![Ds % 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_narrow_split::<m![Gs, Ds / 4], m![Ds % 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul1), &sin_vrf)
-        .vector_widen_concat::<m![Gs, Ds / 8], m![Ds % 8]>()
-        .vector_final()
-        .commit_trim::<m![Ds % 8]>()
-        .commit();
-
-    let q_sin_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]> = device
-        .sub
-        .begin(q_sin.view())
-        .fetch::<m![Gs, Ds / 8], m![Ds % 8]>()
-        .collect::<m![Gs, Ds / 8], m![Ds % 8]>()
-        .to_vrf();
-
-    let result_q: DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Gs, Ds]> = device
-        .main
-        .begin(q.view())
-        .fetch::<m![Gs, Ds / 16], m![Ds % 16]>()
-        .fetch_cast::<f32>()
-        .collect::<m![Gs, Ds / 8], m![Ds % 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_narrow_split::<m![Gs, Ds / 4], m![Ds % 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), &cos_vrf)
-        .vector_widen_concat::<m![Gs, Ds / 8], m![Ds % 8]>()
-        .vector_clip(ClipBinaryOpF32::Add, &q_sin_vrf)
-        .vector_final()
-        .cast::<bf16, m![Ds % 8 # 16]>()
-        .commit_trim::<m![Ds % 8]>()
-        .commit();
-
-    let k_sin: DmTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
-        .main
-        .begin(rotate_half_k.view())
-        .fetch::<m![Ds / 16], m![Ds % 16]>()
-        .fetch_cast::<f32>()
-        .collect::<m![Ds / 8], m![Ds % 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_narrow_split::<m![Ds / 4], m![Ds % 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul1), &sin_vrf)
-        .vector_widen_concat::<m![Ds / 8], m![Ds % 8]>()
-        .vector_final()
-        .commit_trim::<m![Ds % 8]>()
-        .commit();
-
-    let k_sin_vrf: VrfTensor<f32, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
-        .sub
-        .begin(k_sin.view())
-        .fetch::<m![Ds / 8], m![Ds % 8]>()
-        .collect::<m![Ds / 8], m![Ds % 8]>()
-        .to_vrf();
-
-    let result_k: DmTensor<bf16, Chip, Cluster, KvHeadsAcrossSlices, m![Ds]> = device
+    let result_k: DmTensor<bf16, Chip, Cluster, HeadSlices, m![Ds]> = device
         .main
         .begin(k.view())
         .fetch::<m![Ds / 16], m![Ds % 16]>()

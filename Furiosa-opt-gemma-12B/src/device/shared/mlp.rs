@@ -9,11 +9,76 @@ const INVSQRT2: f32 = 0.70710678118f32;
 const H_F32: f32 = H::SIZE as f32;
 
 /// Layout of the fused Down epilogue (global scale, post-FFN RMSNorm, residual, layer gate):
-/// 8 slices of cluster 0 with 480 channels each, the same reducing layout `rmsnorm::normalize`
-/// uses. The kernel stores the result to HBM straight from it.
+/// 16 slices of cluster 0 with 240 channels each. The kernel stores the result to HBM straight
+/// from it.
 pub(crate) type EpilogueSlices = m![1 # 16, H / 240];
 pub(crate) type EpilogueElem = m![H % 240];
 axes![Epi16 = 16];
+/// The raw bf16 residual as `normalize_input` loaded it (eight 480-channel slices), viewed on
+/// cluster 0: both clusters hold the same copy and HBM is not written before the final store, so
+/// reusing it for the epilogue's residual add is bit-exact and saves the second residual DMA.
+pub(crate) type RawResidual = DmTensor<bf16, Chip, Cluster, m![1 # 32, H / 480], m![H % 480]>;
+
+// ---- Prologue span: the two H-sized prologue operands (residual | pre_ff_rms_weight) are contiguous in HBM
+// ONE DMA reads the 15,360-B span from the
+// residual's base (`HbmTensorView::pad` over-read, then `reshape`) onto the eight 480-channel
+// seed slices of each cluster; the operands are read as tiles of that buffer. post_ff keeps its own tail DMA.
+axes![FfOp = 2];
+const OP_RESIDUAL: usize = 0;
+const OP_PRE_RMS: usize = 1;
+type FfSpanHbm = m![H # 7680];
+const _: () = assert!(<FfSpanHbm as M>::SIZE == FfOp::SIZE * H::SIZE);
+pub(crate) type FfSpan = DmTensor<bf16, Chip, UpCluster, UpPairRows, m![FfOp, H % 480]>;
+type FfOpView<'l> = DmTensorView<'l, bf16, Chip, UpCluster, UpPairRows, m![FfOp = 1 # 2, H % 480]>;
+
+fn span_tile(span: &FfSpan, op: usize) -> FfOpView<'_> {
+    span.view().tile::<m![FfOp], 1, m![FfOp = 1 # 2, H % 480]>(op)
+}
+
+/// The one span DMA (anchor = the residual, the lowest address).
+pub(crate) fn load_ff_span(device: &mut Device, residual: &HbmTensor<bf16, Chip, m![H]>) -> FfSpan {
+    let span: HbmTensorView<'_, bf16, Chip, FfSpanHbm> = residual.view().pad();
+    let span: HbmTensorView<'_, bf16, Chip, m![FfOp, H]> = unsafe { span.reshape() };
+    span.to_dm(&mut device.tdma)
+}
+
+/// The raw seed relaid onto the 16 epilogue slices, on chip: (1) ring-16 InterTranspose moves each
+/// 480-channel seed slice's two 240-channel halves to slices h2 * 8 + h8; (2) ring-16 Transpose
+/// swaps those two slice digits into the epilogue order 2 * h8 + h2. Named switch configs (no
+/// config DMA). Pass (1) now writes a FRESH buffer on Main (was: Sub, into the dead
+/// normalized-input buffer through an unsafe reshape). With one up+gate scale DMA the list
+/// schedule placed the aliased write before x's last reads and lir refused it ("T30 has an
+/// inconsistent state ... owner mismatch"); on Sub it also held the first table DMA (Sub-context
+/// wait) for ~330 static cycles. On Main it lands in Main's idle window during the Up stream.
+fn relayout_residual(
+    device: &mut Device,
+    seed: FfOpView<'_>,
+    dead: NormalizedInput,
+) -> DmTensor<bf16, Chip, Cluster, EpilogueSlices, EpilogueElem> {
+    let mut halves: DmTensor<bf16, Chip, UpCluster, m![1 # 16, H / 240 % 2, H / 480], m![H % 240 / 16, 1 # 2, H % 16]> =
+        { let _ = dead; DmTensor::new() };
+    device
+        .main
+        .begin(seed)
+        .fetch::<m![H / 240 % 2, H % 240 / 16], m![H % 16]>()
+        .switch::<m![1 # 16, H / 240 % 2, H / 480], m![H % 240 / 16, 1 # 2]>(SwitchConfig::InterTranspose {
+            slice1: 2,
+            slice0: 8,
+            time0: 15,
+        })
+        .collect::<m![H % 240 / 16, 1 # 2], m![H % 16]>()
+        .commit_trim::<m![H % 16]>()
+        .commit_view(halves.view_mut());
+    let out: DmTensor<bf16, Chip, UpCluster, EpilogueSlices, EpilogueElem> = device
+        .sub
+        .begin(halves.view())
+        .fetch::<m![H % 240 / 16], m![H % 16]>()
+        .switch::<EpilogueSlices, m![H % 240 / 16]>(SwitchConfig::Transpose { slice1: 2, slice0: 8 })
+        .collect::<m![H % 240 / 16], m![H % 16]>()
+        .commit_trim::<m![H % 16]>()
+        .commit();
+    unsafe { out.reshape() }
+}
 axes![WmSlot = 4];
 
 type UpCluster = m![L / 7680];
@@ -29,7 +94,7 @@ type UpActivation = TrfTensor<f8e4m3, Chip, UpCluster, UpRows, m![1], m![Gs, H]>
 
 type UpPairRows = m![1 # 32, H / 480];
 pub(crate) type NormalizedInput = DmTensor<bf16, Chip, UpCluster, UpPairRows, m![H % 480]>;
-// Finite FP8 hi requires abs(x) <= 28. This is checked on the local fixture in
+// Finite FP8 hi requires abs(x) <= 28. This is checked on the expected inputs in
 // numeric_check.py; arbitrary out-of-range activations need a different scaling scheme.
 const UP_ACTIVATION_SCALE: f32 = 16.0;
 fn split_up_activation(
@@ -371,6 +436,9 @@ axes![Iug = 2];
 type IpScale2 = DmTensor<f8e4m3, Chip, UpCluster, IpRows, m![L / 16 % 15 # 16, Iug, L % 2, H / 16]>;
 type IpScaleSrc2 = DmTensor<f8e4m3, Chip, m![Sk2 / 16], m![Sk2 % 16, Sg # 16], m![Iug, Sgs, Sp, Spr]>;
 type IpScaleSw2 = DmTensor<f8e4m3, Chip, m![Sk2 / 16], m![Sk2 % 16, Sgs, Sp], m![Sg # 16, Iug, Spr]>;
+/// Up and Gate block scales as one HBM span from `up_weight_scale`'s base (Iug outermost).
+type UpGateScaleSpan = m![L # 30720, H / 16];
+const _: () = assert!(<UpGateScaleSpan as M>::SIZE == Iug::SIZE * L::SIZE * (H::SIZE / 16));
 
 /// Both scale sources through ONE ring-16 InterTranspose (interleaved on `Iug`): the Gate scale then
 /// has a consumer right after the Up contraction, so its DMA is queued ahead of the Gate weight and
@@ -380,11 +448,17 @@ fn load_ip_scales(
     up: &HbmTensor<f8e4m3, Chip, m![L, H / 16]>,
     gate: &HbmTensor<f8e4m3, Chip, m![L, H / 16]>,
 ) -> IpScale2 {
+    // ONE DMA for both scales by HBM over-read:
+    // `gate_weight_scale` directly follows `up_weight_scale` (offsets 0 /
+    // 3,686,400 in every run; 3,686,400 = 14,400 x 256, no allocator gap), so the span read from
+    // up's base is [Iug = up, gate] x L x H/16. Same 3,840-B / 256-B aligned runs per slice as the
+    // two tile DMAs it replaces, one command startup fewer in the saturated prologue. `gate` is
+    // not read through its own handle.
+    let _ = gate;
+    let span: HbmTensorView<'_, f8e4m3, Chip, UpGateScaleSpan> = up.view().pad();
+    let span: HbmTensorView<'_, f8e4m3, Chip, m![Iug, Sk2, Sgs, Sg, Sp, Spr]> = unsafe { span.reshape() };
     let mut src: IpScaleSrc2 = DmTensor::new();
-    let vu: HbmTensorView<'_, f8e4m3, Chip, m![Sk2, Sgs, Sg, Sp, Spr]> = unsafe { up.view().reshape() };
-    vu.to_dm_view(&mut device.tdma, src.view_mut().tile::<m![Iug], 1, m![Iug = 1 #{!} 2, Sgs, Sp, Spr]>(0));
-    let vg: HbmTensorView<'_, f8e4m3, Chip, m![Sk2, Sgs, Sg, Sp, Spr]> = unsafe { gate.view().reshape() };
-    vg.to_dm_view(&mut device.tdma, src.view_mut().tile::<m![Iug], 1, m![Iug = 1 #{!} 2, Sgs, Sp, Spr]>(1));
+    span.to_dm_view(&mut device.tdma, src.view_mut());
     let sw: IpScaleSw2 = device.main
         .begin(src.view())
         .fetch::<m![Iug, Sgs, Sp], m![Spr]>()
@@ -822,7 +896,7 @@ pub(crate) fn feedforward(
     down_global_scale: &HbmTensor<f32, Chip, m![1]>,
     post_ff_rms_weight: &HbmTensor<bf16, Chip, m![H]>,
     layer_scalar: &HbmTensor<bf16, Chip, m![1 # 8]>,
-    residual: &HbmTensor<bf16, Chip, m![H]>,
+    span: FfSpan,
 ) -> DmTensor<bf16, Chip, Cluster, EpilogueSlices, m![H % 240]> {
     let (up, gate, partials) = project_up_and_gate(
         device,
@@ -832,10 +906,10 @@ pub(crate) fn feedforward(
         up_weight_scale,
         gate_weight_scale,
     );
+    let residual = relayout_residual(device, span_tile(&span, OP_RESIDUAL), x);
     let x = geglu_local(device, up, gate, gate_global_scale);
     // The epilogue's small operands, issued here so they sit on the DMA queue long before the
     // tail needs them.
-    let residual: DmTensor<bf16, Chip, Cluster, EpilogueSlices, m![H % 240]> = residual.to_dm(&mut device.tdma);
     let norm_weight: DmTensor<bf16, Chip, Cluster, EpilogueSlices, m![H % 240]> = post_ff_rms_weight.to_dm(&mut device.tdma);
     let global_scale: DmTensor<f32, Chip, Cluster, EpilogueSlices, m![1 # 8]> = down_global_scale.to_dm(&mut device.tdma);
     let up_scale: DmTensor<f32, Chip, Cluster, EpilogueSlices, m![1 # 8]> = up_global_scale.to_dm(&mut device.tdma);
@@ -993,7 +1067,7 @@ fn down_fused_group3(
     result_offset: usize,
 ) {
     // Written from Main through the vector engine (x 1.0, exact): a Sub `to_vrf` starts at the
-    // scale's static landing, ties with the g3 table DMA there and is listed first, so the core
+    // scale's static landing, ties with the table DMA there and is listed first, so the core
     // waited for the scale before issuing the table (first-after-idle, ~2k, then w1). On Main,
     // which is still decoding w0 at that static time, the table DMA is listed right behind the
     // scale and queues behind it.
@@ -1045,7 +1119,7 @@ type DownDiagTrf = TrfTensor<bf16, Chip, DownCluster, DownRows, m![1], m![H % 60
 
 /// FP8 -> BF16 conversion and the TRF load both on Main, right after the 12-row decode: Main is
 /// ~3.5x faster per flit than Sub for these passes and the finish that consumes the TRF is not on
-/// the critical path. With the conversion on Sub, the Sub context was still busy when the g3 table
+/// the critical path. With the conversion on Sub, the Sub context was still busy when the table
 /// DMA became due, and the lowering then drained Sub before that DMA (`raw.wait sub_context` with
 /// no source), which held the table and w1 DMAs 2.6k behind an idle queue.
 fn down_diag_scale(device: &mut Device, s: &DownDiagScale) -> DownDiagTrf {
@@ -1163,9 +1237,9 @@ fn down_epilogue(
         .fetch::<m![1], m![1 # 8]>()
         .collect::<m![1], m![1 # 8]>()
         .to_vrf();
-    // The GeGLU arrives without the Up global scale `su`, so y here is y_true / su. Only the sqrt
-    // pass needs it: rms' = sqrt(ms' su^2 + eps) / su, with ms' the mean square of y * gs, gives
-    // y * gs / rms' = y_true * gs / sqrt(ms_true + eps) exactly as before.
+    // The GeGLU arrives without the Up global scale `su`, so y here is y_true / su: the mean square
+    // is taken of y * gs * su (= y_true * gs), and su rides in the final pass's scalar gain below,
+    // so y * gain * w / sqrt(ms + eps) = y_true * gs * w * gate / sqrt(ms_true + eps) as before.
     let up_scale_vrf: VrfTensor<f32, Chip, Cluster, EpilogueSlices, m![1 # 8]> = device
         .sub
         .begin(up_scale.view())
@@ -1197,7 +1271,7 @@ fn down_epilogue(
         .vector_final()
         .to_vrf();
     // ... and the norm weight as a plain f32 VRF (no vector pass, so it does not wait for Main's
-    // vector work): the final pass applies the layer gate on the FMA unit's multiplier.
+    // vector work).
     let weight_vrf: VrfTensor<f32, Chip, Cluster, EpilogueSlices, m![H % 240]> = device
         .sub
         .begin(norm_weight.view())
@@ -1205,13 +1279,31 @@ fn down_epilogue(
         .fetch_cast::<f32>()
         .collect::<m![H / 8 % 30], m![H % 8]>()
         .to_vrf();
+    // The final pass's scalar gain = gate * gs * su (one Sub vector pass on three scalars that land
+    // long before the tail): the numerator then needs only Mul0 (gain) and Mul1 (w), which leaves
+    // FpFma free for the inline rms (`h + h`) and FpFpu for its sqrt.
+    let gain_vrf: VrfTensor<f32, Chip, Cluster, EpilogueSlices, m![1 # 8]> = device
+        .sub
+        .begin(layer_scalar.view())
+        .fetch::<m![1], m![1 # 8]>()
+        .fetch_cast::<f32>()
+        .collect::<m![1], m![1 # 8]>()
+        .vector_init()
+        .vector_intra_slice_tag(TagMode::Zero)
+        .vector_narrow_trim::<m![1 # 4]>()
+        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), &global_scale_vrf)
+        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul1), &up_scale_vrf)
+        .vector_widen_pad::<m![1 # 8]>()
+        .vector_final()
+        .to_vrf();
 
-    // Three passes instead of five on the serial tail. (1) mean of (y * gs)^2 straight from the
-    // f32 sums, summed over the 8 slices; (2) sqrt(ms + eps); (3) y * gs / rms * (w * gate) +
-    // r * gate -> bf16. Against the previous chain this drops the bf16 rounding of `y * gs`
-    // before both the square and the normalization, and of the normalized value before the
-    // residual add: each at most one bf16 ulp of the output, the same order as the roundings
-    // that chain already skipped.
+    // Two passes after the partial sum on the serial tail. (1) half mean of (y * gs * su)^2 from the
+    // f32 sums, summed over the 8 slices, + eps / 2 = h, written into VRF; (2) y * gain * w
+    // / sqrt(h + h) + r * gate -> bf16, the rms rebuilt inline (same
+    // idiom: stash the numerator, h + h, sqrt, stash / rms on the FpDiv stage). Against the
+    // previous chain this drops the bf16 rounding of `y * gs` before both the square and the
+    // normalization, and of the normalized value before the residual add: each at most one bf16
+    // ulp of the output, the same order as the roundings that chain already skipped.
     let partial_mean_square: DmTensor<f32, Chip, Cluster, EpilogueSlices, m![1 # 8]> = device
         .main
         .begin(y.view())
@@ -1221,10 +1313,11 @@ fn down_epilogue(
         .vector_intra_slice_tag(TagMode::Zero)
         .vector_narrow_split::<m![H / 4 % 60], m![H % 4]>()
         .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), &global_scale_vrf)
+        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Fma), &up_scale_vrf)
         .vector_stash()
         .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul1), Stash)
         .vector_intra_slice_reduce::<H, m![1], m![1 # 4]>(IntraSliceReduceOpF32::Add)
-        .vector_fp_div(H_F32)
+        .vector_fp_div(2.0f32 * H_F32)
         .vector_widen_pad::<m![1 # 8]>()
         .vector_final()
         .commit_trim::<m![1 # 8]>()
@@ -1232,7 +1325,7 @@ fn down_epilogue(
     // furiosa-opt 0.8.1 prices an inter-slice reduce over these 8 slices at ~2.3k static: all-gather
     // the 8 per-slice partials into Time (named Switch config, no config DMA) and sum them with the
     // intra-slice reducer, which leaves the total on every one of the 8 slices.
-    let reduced_mean_square: DmTensor<f32, Chip, Cluster, m![1 # 16, Epi16], m![1 # 8]> = device
+    let half_ms: VrfTensor<f32, Chip, Cluster, m![1 # 16, Epi16], m![1 # 8]> = device
         .main
         .begin(partial_mean_square.view())
         .fetch::<m![1], m![1 # 8]>()
@@ -1243,28 +1336,10 @@ fn down_epilogue(
         .vector_narrow_trim::<m![1 # 4]>()
         .vector_intra_slice_reduce::<H, m![1], m![1 # 4]>(IntraSliceReduceOpF32::Add)
         .vector_widen_pad::<m![1 # 8]>()
-        .vector_final()
-        .commit_trim::<m![1 # 8]>()
-        .commit();
-    // sqrt pass writes the rms VRF straight from Main through the vector engine (Sub is idle in the tail;
-    // AO v7 lesson): no DM commit + Sub StoVrf on the serial tail.
-    let mean_square: DmTensor<f32, Chip, Cluster, EpilogueSlices, m![1 # 8]> = unsafe { reduced_mean_square.reshape() };
-    let rms_vrf: VrfTensor<f32, Chip, Cluster, EpilogueSlices, m![1 # 8]> = device
-        .main
-        .begin(mean_square.view())
-        .fetch::<m![1], m![1 # 8]>()
-        .collect::<m![1], m![1 # 8]>()
-        .vector_init()
-        .vector_intra_slice_tag(TagMode::Zero)
-        .vector_narrow_trim::<m![1 # 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), &up_scale_vrf)
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul1), &up_scale_vrf)
-        .vector_fp_binary(FpBinaryOp::AddF, EPS)
-        .vector_fp_unary(FpUnaryOp::Sqrt)
-        .vector_fp_div(&up_scale_vrf)
-        .vector_widen_pad::<m![1 # 8]>()
+        .vector_clip(ClipBinaryOpF32::Add, 0.5f32 * EPS)
         .vector_final()
         .to_vrf(&mut device.sub);
+    let half_ms: VrfTensor<f32, Chip, Cluster, EpilogueSlices, m![1 # 8]> = unsafe { half_ms.reshape() };
 
     device.main
         .begin(y.view())
@@ -1273,10 +1348,12 @@ fn down_epilogue(
         .vector_init()
         .vector_intra_slice_tag(TagMode::Zero)
         .vector_narrow_split::<m![H / 4 % 60], m![H % 4]>()
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), &global_scale_vrf)
-        .vector_fp_binary(FpBinaryOp::DivF, &rms_vrf)
+        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul0), &gain_vrf)
         .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Mul1), &weight_vrf)
-        .vector_fp_binary(FpBinaryOp::MulF(FpMulAlu::Fma), &layer_scalar_vrf)
+        .vector_stash()
+        .vector_fp_binary_with_mode(FpBinaryOp::AddF, BinaryArgMode::Mode11, &half_ms)
+        .vector_fp_unary(FpUnaryOp::Sqrt)
+        .vector_fp_div_with_mode(BinaryArgMode::Mode10, Stash)
         .vector_widen_concat::<m![H / 8 % 30], m![H % 8]>()
         .vector_clip(ClipBinaryOpF32::Add, &residual_gated_vrf)
         .vector_final()
@@ -1288,18 +1365,12 @@ fn down_epilogue(
 /// Normalize independently in each cluster's eight-slice seed group. The RMS reduction,
 /// division, weight multiplication and BF16 rounding match shared::rmsnorm::normalize.
 /// Returning the shards directly avoids gathering to a slice and staging through HBM.
-pub(crate) fn normalize_input(
-    device: &mut Device,
-    x: &HbmTensor<bf16, Chip, m![H]>,
-    rms_weight: &HbmTensor<bf16, Chip, m![H]>,
-) -> NormalizedInput {
+pub(crate) fn normalize_input(device: &mut Device, span: &FfSpan) -> NormalizedInput {
     type ReducingSlices = UpPairRows;
-
-    let x: DmTensor<bf16, Chip, UpCluster, ReducingSlices, m![H % 480]> = x.to_dm(&mut device.tdma);
 
     let reduced_mean_square: DmTensor<f32, Chip, UpCluster, m![1 # 32, Dummy8], m![1 # 8]> = device
         .main
-        .begin(x.view())
+        .begin(span_tile(span, OP_RESIDUAL))
         .fetch::<m![H / 16 % 30], m![H % 16]>()
         .fetch_cast::<f32>()
         .collect::<m![H / 8 % 60], m![H % 8]>()
@@ -1332,7 +1403,6 @@ pub(crate) fn normalize_input(
         .commit();
     let rms: DmTensor<f32, Chip, UpCluster, ReducingSlices, m![1 # 8]> = unsafe { rms.reshape() };
 
-    let weight_dm: DmTensor<bf16, Chip, UpCluster, ReducingSlices, m![H % 480]> = rms_weight.to_dm(&mut device.tdma);
     // A Main copy of the weight (Main is busy with the reduce when it lands) so the Sub `to_vrf` below
     // is listed after the Up weight DMA: on hardware a Sub command listed before that DMA waits behind
     // the head lookup-table StoTab (5.7k cold) and holds the Up weight issue.
@@ -1344,7 +1414,7 @@ pub(crate) fn normalize_input(
     weight_buf.view_mut().memset(const { bf16::from_f32(0.0) }, &mut device.sub);
     device
         .main
-        .begin(weight_dm.view())
+        .begin(span_tile(span, OP_PRE_RMS))
         .fetch::<m![H / 16 % 30], m![H % 16]>()
         .collect::<m![H / 16 % 30], m![H % 16]>()
         .commit_trim::<m![H % 16]>()
@@ -1366,7 +1436,7 @@ pub(crate) fn normalize_input(
 
     let normalized: DmTensor<bf16, Chip, UpCluster, ReducingSlices, m![H % 480]> = device
         .main
-        .begin(x.view())
+        .begin(span_tile(span, OP_RESIDUAL))
         .fetch::<m![H / 16 % 30], m![H % 16]>()
         .fetch_cast::<f32>()
         .collect::<m![H / 8 % 60], m![H % 8]>()
@@ -1381,5 +1451,6 @@ pub(crate) fn normalize_input(
         .commit_trim::<m![H % 8]>()
         .commit();
 
+    // The raw seed stays live in the span as the epilogue's residual operand (see `feedforward`).
     normalized
 }

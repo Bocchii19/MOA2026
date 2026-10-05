@@ -1,0 +1,15 @@
+Submission:   5100367f
+Team:         The_Odyssey_of_EDABK
+Status:       completed
+Stage:        evaluate
+Submitted:    2026-10-01 07:44
+Finished:     2026-10-01 07:47
+
+Cycles:
+  ops::sliding_project_qkv         64859
+  ops::sliding_attention_output    35136
+  ops::decoder_feedforward         194746
+
+Score:        9.4574
+
+Full log:     moa-submitter log 5100367f

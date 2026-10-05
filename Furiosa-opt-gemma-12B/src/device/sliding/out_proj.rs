@@ -1,10 +1,10 @@
-//! The attention output projection in the 16 x 16 strip geometry (WORK_LOG.md, redesign panel).
+//! The attention output projection in the 16 x 16 block geometry.
 //!
-//! Per cluster (cluster c owns H rows 1920c..), slice (g, s) = row group g (120 rows) x column strip
+//! Per cluster (cluster c owns H rows 1920c..), slice (g, s) = row group g (120 rows) x column block
 //! s (256 Qs columns): its weight piece is 120 runs of exactly 256 B (30,720 B), streamed as two
 //! tiles (rows 0..92 and 92..120 of every slice) so the second tile's contraction is short. Each
-//! slice needs only its 256-column strip of x (hi/lo, 512 B of TRF). The contraction sums the 16
-//! strips with the Inter-Slice Reducer and leaves 120 f32 rows on slice (g, 0), which is exactly one
+//! slice needs only its 256-column block of x (hi/lo, 512 B of TRF). The contraction sums the 16
+//! blocks with the Inter-Slice Reducer and leaves 120 f32 rows on slice (g, 0), which is exactly one
 //! epilogue slice's worth: the cross-cluster gather moves 32 pieces of 480 B.
 use furiosa_opt_std::prelude::*;
 
@@ -14,46 +14,46 @@ use crate::{Chip, EPS};
 
 const H_F32: f32 = H::SIZE as f32;
 
-pub(crate) type G3Cluster = m![H / 1920];
-/// 16 row groups of 120 rows x 16 column strips of 256.
-pub(crate) type G3Slices = m![H / 120 % 16, Qs / 256];
-/// The contraction output: one live slice per row group (strip digit padded).
-pub(crate) type G3Rows = m![H / 120 % 16, 1 # 16];
+pub(crate) type OutCluster = m![H / 1920];
+/// 16 row groups of 120 rows x 16 column blocks of 256.
+pub(crate) type OutSlices = m![H / 120 % 16, Qs / 256];
+/// The contraction output: one live slice per row group (block digit padded).
+pub(crate) type OutRows = m![H / 120 % 16, 1 # 16];
 
-type G3X = DmTensor<bf16, Chip, G3Cluster, G3Slices, m![Qs % 256]>;
-type G3Activation = TrfTensor<f8e4m3, Chip, G3Cluster, G3Slices, m![Dummy2], m![Qs % 256]>;
-pub(crate) type G3Weight = DmTensor<f8e4m3, Chip, G3Cluster, G3Slices, m![H % 120, Qs % 256]>;
-type G3Result = DmTensor<f32, Chip, G3Cluster, G3Rows, m![H % 120]>;
+type OutInput = DmTensor<bf16, Chip, OutCluster, OutSlices, m![Qs % 256]>;
+type OutActivation = TrfTensor<f8e4m3, Chip, OutCluster, OutSlices, m![Dummy2], m![Qs % 256]>;
+pub(crate) type OutWeight = DmTensor<f8e4m3, Chip, OutCluster, OutSlices, m![H % 120, Qs % 256]>;
+type OutResult = DmTensor<f32, Chip, OutCluster, OutRows, m![H % 120]>;
 
 const ACT_SCALE: f32 = 128.0;
 
-axes![G3Epi32 = 32];
-pub(crate) type G3EpilogueSlices = m![1 # 8, H / 120];
-type G3Operand = DmTensor<bf16, Chip, Cluster, G3EpilogueSlices, m![H % 120]>;
+axes![OutEpi32 = 32];
+pub(crate) type OutEpilogueSlices = m![1 # 8, H / 120];
+type OutOperand = DmTensor<bf16, Chip, Cluster, OutEpilogueSlices, m![H % 120]>;
 
-/// x on every row group of both clusters, each slice holding its 256-column strip. The seed lives on
+/// x on every row group of both clusters, each slice holding its 256-column block. The seed lives on
 /// PE 0 only (slice (0, a, s) holds columns 256 s + 64 a .. +64, 128 B each), so the x DMA runs on
 /// one engine per cluster (64 destinations) and tile A's weight DMA, issued right behind it, is not
 /// held up on the other three engines. A ring-16 Broadcast1 over the 16 outer slice digits
-/// (stride 16) gives every row group all four 64-column pieces of its strip (live ring positions
+/// (stride 16) gives every row group all four 64-column pieces of its block (live ring positions
 /// 0..3); the dead positions land in the `1 # 4` element padding, which the compaction pass skips.
-type G3Seed = DmTensor<bf16, Chip, G3Cluster, m![1 # 4, Qs / 64 % 4, Qs / 256], m![Qs % 64]>;
-pub(crate) fn load_input_g3(device: &mut Device, x: HbmTensorView<'_, bf16, Chip, m![Qs]>) -> G3X {
-    let seed: G3Seed = x.to_dm(&mut device.tdma);
+type OutSeed = DmTensor<bf16, Chip, OutCluster, m![1 # 4, Qs / 64 % 4, Qs / 256], m![Qs % 64]>;
+pub(crate) fn load_input(device: &mut Device, x: HbmTensorView<'_, bf16, Chip, m![Qs]>) -> OutInput {
+    let seed: OutSeed = x.to_dm(&mut device.tdma);
     // The switch writes into the first half of a buffer cleared by one Sub memset whose static time
     // outlasts the x DMA, so the first x consumer is listed after tile A's weight DMA and the core
     // issues tile A right behind x (x uses only PE 0's engine per cluster).
-    let mut padded: DmTensor<bf16, Chip, G3Cluster, G3Slices, m![Dummy2, 1 # 4, Qs / 64 % 4, Qs % 64]> = DmTensor::new();
+    let mut padded: DmTensor<bf16, Chip, OutCluster, OutSlices, m![Dummy2, 1 # 4, Qs / 64 % 4, Qs % 64]> = DmTensor::new();
     padded.view_mut().memset(const { bf16::from_f32(0.0) }, &mut device.sub);
     device
         .main
         .begin(seed.view())
         .fetch::<m![1], m![Qs % 64]>()
-        .switch::<G3Slices, m![1 # 4, Qs / 64 % 4]>(SwitchConfig::Broadcast1 { slice1: 16, slice0: 16 })
+        .switch::<OutSlices, m![1 # 4, Qs / 64 % 4]>(SwitchConfig::Broadcast1 { slice1: 16, slice0: 16 })
         .collect::<m![1 # 4, Qs / 64 % 4, Qs / 16 % 4], m![Qs % 16]>()
         .commit_trim::<m![Qs % 16]>()
         .commit_view(padded.view_mut().tile::<m![Dummy2], 1, m![Dummy2 = 1 #{!} 2, 1 # 4, Qs / 64 % 4, Qs % 64]>(0));
-    let gathered: DmTensor<bf16, Chip, G3Cluster, G3Slices, m![Qs / 64 % 4, Qs % 64]> = device
+    let gathered: DmTensor<bf16, Chip, OutCluster, OutSlices, m![Qs / 64 % 4, Qs % 64]> = device
         .main
         .begin(padded.view().tile::<m![Dummy2], 1, m![Dummy2 = 1 # 2, 1 # 4, Qs / 64 % 4, Qs % 64]>(0))
         .fetch::<m![Qs / 64 % 4, Qs / 16 % 4], m![Qs % 16]>()
@@ -64,8 +64,8 @@ pub(crate) fn load_input_g3(device: &mut Device, x: HbmTensorView<'_, bf16, Chip
 }
 
 /// `[hi, lo]` with `hi = f8(128 x)`, `lo = f8(128 x - hi)`, per slice 2 x 256 FP8.
-fn split_g3(device: &mut Device, x: &G3X) -> DmTensor<f8e4m3, Chip, G3Cluster, G3Slices, m![Dummy2, Qs % 256]> {
-    let mut out: DmTensor<f8e4m3, Chip, G3Cluster, G3Slices, m![Dummy2, Qs % 256]> = DmTensor::new();
+fn split_input(device: &mut Device, x: &OutInput) -> DmTensor<f8e4m3, Chip, OutCluster, OutSlices, m![Dummy2, Qs % 256]> {
+    let mut out: DmTensor<f8e4m3, Chip, OutCluster, OutSlices, m![Dummy2, Qs % 256]> = DmTensor::new();
     device.main
         .begin(x.view())
         .fetch::<m![Qs / 16 % 16], m![Qs % 16]>()
@@ -80,7 +80,7 @@ fn split_g3(device: &mut Device, x: &G3X) -> DmTensor<f8e4m3, Chip, G3Cluster, G
         .cast::<f8e4m3, m![Qs % 8 # 32]>()
         .commit_trim::<m![Qs % 8]>()
         .commit_view(out.view_mut().tile::<m![Dummy2], 1, m![Dummy2 = 1 #{!} 2, Qs % 256]>(0));
-    let hi_neg: DmTensor<f8e4m3, Chip, G3Cluster, G3Slices, m![Qs % 256]> = device
+    let hi_neg: DmTensor<f8e4m3, Chip, OutCluster, OutSlices, m![Qs % 256]> = device
         .main
         .begin(x.view())
         .fetch::<m![Qs / 16 % 16], m![Qs % 16]>()
@@ -95,7 +95,7 @@ fn split_g3(device: &mut Device, x: &G3X) -> DmTensor<f8e4m3, Chip, G3Cluster, G
         .cast::<f8e4m3, m![Qs % 8 # 32]>()
         .commit_trim::<m![Qs % 8]>()
         .commit();
-    let hi_neg_vrf: VrfTensor<f32, Chip, G3Cluster, G3Slices, m![Qs % 256]> = device
+    let hi_neg_vrf: VrfTensor<f32, Chip, OutCluster, OutSlices, m![Qs % 256]> = device
         .sub
         .begin(hi_neg.view())
         .fetch::<m![Qs / 32 % 8], m![Qs % 32]>()
@@ -120,24 +120,24 @@ fn split_g3(device: &mut Device, x: &G3X) -> DmTensor<f8e4m3, Chip, G3Cluster, G
     out
 }
 
-axes![G3Q = 32, G3R = 120];
+axes![OutQ = 32, OutR = 120];
 
 /// Rows `r0..r0+ROWS` of every slice's 120 rows (ROWS x 256 B per slice) as its own DM tensor, and
-/// its contraction into rows `r0..r0+ROWS` of `result` (ver16 `output_tile_fns!` in the G3 geometry).
-macro_rules! g3_tile_fns {
+/// its contraction into rows `r0..r0+ROWS` of `result`.
+macro_rules! out_tile_fns {
     ($load:ident, $tile:ident, $rows:literal, $r0:literal) => {
-        fn $load(device: &mut Device, weight: &HbmTensor<f8e4m3, Chip, m![H, Qs]>) -> DmTensor<f8e4m3, Chip, G3Cluster, G3Slices, m![H % 120 = $rows, Qs % 256]> {
-            let v: HbmTensorView<'_, f8e4m3, Chip, m![G3Q, G3R, Qs]> = unsafe { weight.view().reshape() };
-            let d: DmTensor<f8e4m3, Chip, m![G3Q / 16], m![G3Q % 16, Qs / 256], m![G3R = $rows, Qs % 256]> =
-                v.tile::<m![G3R], $rows, m![G3Q, G3R = $rows # 120, Qs]>($r0).to_dm(&mut device.tdma);
+        fn $load(device: &mut Device, weight: &HbmTensor<f8e4m3, Chip, m![H, Qs]>) -> DmTensor<f8e4m3, Chip, OutCluster, OutSlices, m![H % 120 = $rows, Qs % 256]> {
+            let v: HbmTensorView<'_, f8e4m3, Chip, m![OutQ, OutR, Qs]> = unsafe { weight.view().reshape() };
+            let d: DmTensor<f8e4m3, Chip, m![OutQ / 16], m![OutQ % 16, Qs / 256], m![OutR = $rows, Qs % 256]> =
+                v.tile::<m![OutR], $rows, m![OutQ, OutR = $rows # 120, Qs]>($r0).to_dm(&mut device.tdma);
             unsafe { d.reshape() }
         }
 
         fn $tile(
             device: &mut Device,
-            x_trf: &G3Activation,
-            w: DmTensor<f8e4m3, Chip, G3Cluster, G3Slices, m![H % 120 = $rows, Qs % 256]>,
-            result: &mut G3Result,
+            x_trf: &OutActivation,
+            w: DmTensor<f8e4m3, Chip, OutCluster, OutSlices, m![H % 120 = $rows, Qs % 256]>,
+            result: &mut OutResult,
         ) {
             device.main
                 .begin(w.view())
@@ -152,7 +152,7 @@ macro_rules! g3_tile_fns {
                 .vector_narrow_trim::<m![1 # 4]>()
                 .vector_intra_slice_reduce::<Dummy2, m![H % 120 = $rows], m![1 # 4]>(IntraSliceReduceOpF32::Add)
                 .vector_widen_pad::<m![1 # 8]>()
-                .vector_inter_slice_reduce::<G3Rows, m![H % 120 = $rows]>(InterSliceReduceOpF32::Add)
+                .vector_inter_slice_reduce::<OutRows, m![H % 120 = $rows]>(InterSliceReduceOpF32::Add)
                 .vector_final()
                 .transpose::<m![H % 120 = $rows / 2], m![H % 120 = $rows % 2 # 8]>()
                 .commit_trim::<m![H % 120 = $rows % 2]>()
@@ -160,12 +160,12 @@ macro_rules! g3_tile_fns {
         }
     };
 }
-g3_tile_fns!(load_tile_a, contract_tile_a, 92, 0);
-g3_tile_fns!(load_tile_b, contract_tile_b, 28, 92);
+out_tile_fns!(load_tile_a, contract_tile_a, 92, 0);
+out_tile_fns!(load_tile_b, contract_tile_b, 28, 92);
 
-/// Identity copy of x (a delay device, see ver16 `delay_output_input`): makes x_trf ready late in the
+/// Identity copy of x (a delay device): makes x_trf ready late in the
 /// static schedule so the second tile's DMA is listed before the first contraction.
-fn copy_g3(device: &mut Device, x: &G3X) -> G3X {
+fn copy_input(device: &mut Device, x: &OutInput) -> OutInput {
     device.main
         .begin(x.view())
         .fetch::<m![Qs / 16 % 16], m![Qs % 16]>()
@@ -181,35 +181,35 @@ fn copy_g3(device: &mut Device, x: &G3X) -> G3X {
 /// dispatch). History: with the 16-destination quarter seed the window was 31..32 copies (33 put a
 /// gather wait before the residual DMA, 34 listed weight_scale before the last contraction); a copy
 /// is ~0.35-1.5k on hardware against 280 static.
-fn delay_g3(device: &mut Device, x: &G3X) -> G3X {
-    let x = copy_g3(device, x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
-    let x = copy_g3(device, &x);
+fn delay_input(device: &mut Device, x: &OutInput) -> OutInput {
+    let x = copy_input(device, x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
+    let x = copy_input(device, &x);
     x
 }
 
-fn operand_vrf(device: &mut Device, t: &G3Operand) -> VrfTensor<f32, Chip, Cluster, G3EpilogueSlices, m![H % 120]> {
+fn operand_vrf(device: &mut Device, t: &OutOperand) -> VrfTensor<f32, Chip, Cluster, OutEpilogueSlices, m![H % 120]> {
     device
         .sub
         .begin(t.view())
@@ -220,9 +220,9 @@ fn operand_vrf(device: &mut Device, t: &G3Operand) -> VrfTensor<f32, Chip, Clust
 }
 
 /// The gather destination, produced by a Sub pass from x so its readiness sync is released after
-/// x lands instead of at the kernel start (ver16 J1).
-fn gather_buffer_g3(device: &mut Device, x: &G3X) -> DmTensor<f32, Chip, Cluster, G3EpilogueSlices, m![H % 120]> {
-    let t: DmTensor<f32, Chip, G3Cluster, G3Slices, m![Qs % 256 = 120]> = device
+/// x lands instead of at the kernel start.
+fn gather_buffer(device: &mut Device, x: &OutInput) -> DmTensor<f32, Chip, Cluster, OutEpilogueSlices, m![H % 120]> {
+    let t: DmTensor<f32, Chip, OutCluster, OutSlices, m![Qs % 256 = 120]> = device
         .sub
         .begin(x.view().tile::<m![Qs % 256], 120, m![Qs % 256 = 120 # 256]>(0))
         .fetch::<m![1], m![Qs % 256 = 120]>()
@@ -233,31 +233,31 @@ fn gather_buffer_g3(device: &mut Device, x: &G3X) -> DmTensor<f32, Chip, Cluster
     unsafe { t.reshape() }
 }
 
-/// k2c projection + fused epilogue (the epilogue is ver16's, unchanged: gather into cluster 0's
+/// Projection + fused epilogue (gather into cluster 0's
 /// 32 x 120 slices, mean square, ring-32 all-gather reduce, sqrt, final).
-pub(crate) fn project_output_g3(
+pub(crate) fn project_output(
     device: &mut Device,
-    x: &G3X,
+    x: &OutInput,
     weight: &HbmTensor<f8e4m3, Chip, m![H, Qs]>,
     weight_scale: &HbmTensor<bf16, Chip, m![H]>,
     norm_weight: &HbmTensor<bf16, Chip, m![H]>,
     residual: &HbmTensor<bf16, Chip, m![H]>,
-) -> DmTensor<bf16, Chip, Cluster, G3EpilogueSlices, m![H % 120]> {
-    let y_buffer = gather_buffer_g3(device, x);
-    let xd = delay_g3(device, x);
-    let x2 = split_g3(device, &xd);
-    let x_trf: G3Activation = device
+) -> DmTensor<bf16, Chip, Cluster, OutEpilogueSlices, m![H % 120]> {
+    let y_buffer = gather_buffer(device, x);
+    let xd = delay_input(device, x);
+    let x2 = split_input(device, &xd);
+    let x_trf: OutActivation = device
         .sub
         .begin(x2.view())
         .fetch::<m![Dummy2, Qs / 32 % 8], m![Qs % 32]>()
         .collect::<m![Dummy2, Qs / 32 % 8], m![Qs % 32]>()
         .to_trf();
-    let weight_scale: G3Operand = weight_scale.to_dm(&mut device.tdma);
-    let norm_weight: G3Operand = norm_weight.to_dm(&mut device.tdma);
-    let residual: G3Operand = residual.to_dm(&mut device.tdma);
+    let weight_scale: OutOperand = weight_scale.to_dm(&mut device.tdma);
+    let norm_weight: OutOperand = norm_weight.to_dm(&mut device.tdma);
+    let residual: OutOperand = residual.to_dm(&mut device.tdma);
     let w0 = load_tile_a(device, weight);
     let w1 = load_tile_b(device, weight);
-    let mut result: G3Result = DmTensor::new();
+    let mut result: OutResult = DmTensor::new();
     contract_tile_a(device, &x_trf, w0, &mut result);
     contract_tile_b(device, &x_trf, w1, &mut result);
     let mut y = y_buffer;
@@ -265,14 +265,14 @@ pub(crate) fn project_output_g3(
 
     let weight_scale_vrf = operand_vrf(device, &weight_scale);
     let residual_vrf = operand_vrf(device, &residual);
-    let y_vrf: VrfTensor<f32, Chip, Cluster, G3EpilogueSlices, m![H % 120]> = device
+    let y_vrf: VrfTensor<f32, Chip, Cluster, OutEpilogueSlices, m![H % 120]> = device
         .sub
         .begin(y.view())
         .fetch::<m![H / 8 % 15], m![H % 8]>()
         .collect::<m![H / 8 % 15], m![H % 8]>()
         .to_vrf();
 
-    let partial_mean_square: DmTensor<f32, Chip, Cluster, G3EpilogueSlices, m![1 # 8]> = device
+    let partial_mean_square: DmTensor<f32, Chip, Cluster, OutEpilogueSlices, m![1 # 8]> = device
         .main
         .begin(y.view())
         .fetch::<m![H / 8 % 15], m![H % 8]>()
@@ -289,11 +289,11 @@ pub(crate) fn project_output_g3(
         .vector_final()
         .commit_trim::<m![1 # 8]>()
         .commit();
-    let reduced_mean_square: DmTensor<f32, Chip, Cluster, m![1 # 8, G3Epi32], m![1 # 8]> = device
+    let reduced_mean_square: DmTensor<f32, Chip, Cluster, m![1 # 8, OutEpi32], m![1 # 8]> = device
         .main
         .begin(partial_mean_square.view())
         .fetch::<m![1], m![1 # 8]>()
-        .switch::<m![1 # 8, G3Epi32], m![H / 120]>(SwitchConfig::Broadcast1 { slice1: 32, slice0: 1 })
+        .switch::<m![1 # 8, OutEpi32], m![H / 120]>(SwitchConfig::Broadcast1 { slice1: 32, slice0: 1 })
         .collect::<m![H / 120], m![1 # 8]>()
         .vector_init()
         .vector_intra_slice_tag(TagMode::Zero)
@@ -303,8 +303,8 @@ pub(crate) fn project_output_g3(
         .vector_final()
         .commit_trim::<m![1 # 8]>()
         .commit();
-    let mean_square: DmTensor<f32, Chip, Cluster, G3EpilogueSlices, m![1 # 8]> = unsafe { reduced_mean_square.reshape() };
-    let rms_vrf: VrfTensor<f32, Chip, Cluster, G3EpilogueSlices, m![1 # 8]> = device
+    let mean_square: DmTensor<f32, Chip, Cluster, OutEpilogueSlices, m![1 # 8]> = unsafe { reduced_mean_square.reshape() };
+    let rms_vrf: VrfTensor<f32, Chip, Cluster, OutEpilogueSlices, m![1 # 8]> = device
         .main
         .begin(mean_square.view())
         .fetch::<m![1], m![1 # 8]>()
